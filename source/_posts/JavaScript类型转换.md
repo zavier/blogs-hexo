@@ -30,7 +30,7 @@ var res = typeof(s);
 | typeof(res) === "object"    | 值是对象或null |
 | typeof(res) === "function"  | 值是函数       |
 
-
+<!-- more -->
 
 ### Boolean类型转换
 
