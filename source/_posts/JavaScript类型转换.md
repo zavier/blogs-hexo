@@ -6,8 +6,6 @@ tags: javascript
 
 
 
-### ECMAScript 数据类型
-
 ECMAScript中有五种基本数据类型：`Undefined`, `Null`, ` Boolean`, `Number`, `String`，一种复杂数据类型：`Object`
 
 
