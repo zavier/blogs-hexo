@@ -67,7 +67,7 @@ top: true
 # Miscellaneous
 baidu_analytics: ''
 google_analytics: ''
-favicon: /favicon.png
+favicon: /images/favicon.ico
 
 #你的头像url
 avatar: /images/weixin.jpg
