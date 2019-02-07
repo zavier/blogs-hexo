@@ -1,5 +1,5 @@
 ---
-title: Redis源码学习笔记-SDS
+title: Redis数据结构-SDS
 date: 2019-01-26 12:27:31
 tags: redis
 ---
