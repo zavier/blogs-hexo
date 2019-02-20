@@ -1,10 +1,8 @@
 ---
-title: AQS概述
+title: AbstractQueuedSynchronizer概述
 date: 2019-02-20 20:48:15
 tags: java
 ---
-
-AbstractQueuedSynchronizer概述
 
 AbstractQueuedSynchronizer 是一个用于在竞争资源（如多线程）时使用的同步器，它内部使用了一个`int`类型的字段`status`表示需要同步的资源状态， 并基于一个先进先出（FIFO）的等待队列，队列中的每个节点表示要获取资源的线程
 
