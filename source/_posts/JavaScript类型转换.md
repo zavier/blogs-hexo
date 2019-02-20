@@ -60,7 +60,7 @@ Boolean(undefined) == false
 
 `Number()`, `parseInt()` 和 `parseFloat()`，第一个函数可以用于任何数量类型，而另外两个函数则专门用于把字符串转换成数值
 
-| 参数      | Number()                         | parseInt();  parseInt("xx", [8\|10\|16])      |
+| 参数      | Number()                         | parseInt();  parseInt("xx", [8 10 16])      |
 | --------- | -------------------------------- | --------------------------------------------- |
 | true      | Number(ture) === 1               | parseInt(true) === NaN(isNaN)                 |
 | false     | Number(false) === 0              | parseInt(false) === NaN(isNaN)                |
