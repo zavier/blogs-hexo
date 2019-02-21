@@ -1,5 +1,5 @@
 ---
-title: AbstractQueuedSynchronizer概述
+title: AbstractQueuedSynchronizer简述
 date: 2019-02-20 20:48:15
 tags: java
 ---
@@ -149,4 +149,7 @@ public class OneShotLatch {
 }
 ```
 
+**小结**
+
+使用AQS后，我们要做的就是通过status来控制请求和释放资源操作及是否成功，而AQS会负责在获取失败后将其放入队列，等待有释放资源操作后被唤醒，进而再次请求资源等操作
 
