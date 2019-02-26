@@ -17,6 +17,8 @@ countDownLatch.countDown();
 
 利用这两个方法，我们能用来做什么呢？
 
+<!-- more -->
+
 ## 让一组线程等待同时开始
 
 这种用法，我们只需要将`CountDownLatch`的初始值设为1，在需要线程阻塞的地方调用`countDownLatch.await()`方法，当满足开始条件后，调用`countDownLatch.countDown()`方法将类中的值减为0，让其他所有阻塞的线程可以几乎同时得到执行
