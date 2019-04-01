@@ -15,7 +15,7 @@ SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(inputStr
 // 使用 SqlSessionFactory 创建 SqlSession(请求作用域，用后销毁)
 SqlSession session = sessionFactory.openSession(true);
 // 获取对应 Mapper
-UserMapper mapper = session.getUser(UserMapper.class);
+UserMapper mapper = session.getMapper(UserMapper.class);
 // 执行查询
 User user = mapper.findById(1);
 // 关闭 session
