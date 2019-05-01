@@ -1,10 +1,10 @@
 ---
-title: spring-beans
+title: spring-beans 中 Bean解析创建过程（上）
 date: 2019-05-01 17:59:43
 tags: java
 ---
 
-# spring-beans 中 Bean解析创建过程（上）
+
 
 spring-beans虽然是一个很基础的包，但是它已经包括的很多的功能，我们先看下如何在只使用spring-beans的情况下，解析并拿到xml中配置的bean实例
 
