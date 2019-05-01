@@ -43,7 +43,7 @@ SimpleBean bean = beanFactory.getBean(SimpleBean.class);
 
 ![](http://zhengw-tech.com/images/DefaultListableBeanFactory.png)
 
-在这个图中，我们能看出其主要是实现了了两个接口
+在这个图中，我们能看出其主要是实现了两个接口
 
 - BeanFactory  - Bean的工厂类，负责创建Bean实例等
 - BeanDefinitionRegistry - Bean定义的注册器，可以将Bean的定义信息注册到其中
@@ -64,20 +64,29 @@ XmlBeanDefinitionReader.loadBeanDefinition
 
 而BeanDefinitionParseDelegate对于默认的标签（bean、import、alias等）和自定义的标签有不同的处理逻辑
 
-### 一、 beans默认标签（bean、import、alias等）
+### 一、自定义标签
+
+```java
+// 对应的方法为，这次我们先不进行跟踪讲解
+delegate.parseCustomElement(root)
+```
+
+
+
+### 二、 beans默认标签（bean、import、alias等）
 
 BeanDefinitionParserDelegate的parseBeanDefinitionElement方法，它的执行流程大体如下
 
-1. 解析bean标签中的ID和name属性，将beanName=id，并校验次beanName是否已经存在
+1.解析bean标签中的ID和name属性，将beanName=id，并校验次beanName是否已经存在
 
-2. 解析bean标签中的class等属性，创建 AbstractBeanDefinition (Bean的定义包装类)
+2.解析bean标签中的class等属性，创建 AbstractBeanDefinition (Bean的定义包装类)
 
 ```java
 GenericBeanDefinition bd = new GenericBeanDefinition();
 bd.setBeanClass(ClassUtils.forName(className, classLoader));
 ```
 
-3. 解析bean标签属性(scope, lazy-init, init-method, destroy-method等)，并赋值给AbstractBeanDefinition中对应的属性
+3.解析bean标签属性(scope, lazy-init, init-method, destroy-method等)，并赋值给AbstractBeanDefinition中对应的属性
 
 ```java
 // BeanDefinitionParserDelegate.parseBeanDefinitionAttributes方法
@@ -127,7 +136,7 @@ class AbstractBeanDefinition extends BeanMetadataAttributeAccessor
 }
 ```
 
-4. 处理bean标签中的子标签，如constructor-args, property等，并赋值给AbstractBeanDefinition中对应的属性
+4.处理bean标签中的子标签，如constructor-args, property等，并赋值给AbstractBeanDefinition中对应的属性
 
 ```java
 AbstractBeanDefinition bd = ...;
@@ -135,7 +144,7 @@ bd.setConstructorArgumentValues(..);  // constructor-args
 bd.setPropertyValues(..);  // property
 ```
 
-5. 创建BeanDefinitionHolder(对BeanDefinition的包装类，主要是包含了 alias属性)
+5.创建BeanDefinitionHolder(对BeanDefinition的包装类，主要是包含了 alias属性)
 
 ```java
 new BeanDefinitionHolder(beanDefinition, beanName, aliasesArray);
@@ -148,20 +157,25 @@ public class BeanDefinitionHolder implements BeanMetadataElement {
 }
 ```
 
-6. 最后调用BeanDefinitionReaderUtils.registerBeanDefinition进行注册
+6.最后调用BeanDefinitionReaderUtils.registerBeanDefinition注册到DefaultListableBeanFactory
 
 ```java
-// 这里的 registry就是最初的 DefaultListableBeanFactory
-BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());
-```
+public static void registerBeanDefinition(
+		BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry)
+		throws BeanDefinitionStoreException {
 
+	// Register bean definition under primary name.
+	String beanName = definitionHolder.getBeanName();
+	registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());
 
-
-### 二、自定义标签
-
-```java
-// 对应的方法为，这次我们先不进行讲解
-delegate.parseCustomElement(root)
+	// Register aliases for bean name, if any.
+	String[] aliases = definitionHolder.getAliases();
+	if (aliases != null) {
+		for (String alias : aliases) {
+			registry.registerAlias(beanName, alias);
+		}
+	}
+}
 ```
 
 
