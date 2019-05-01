@@ -1,5 +1,5 @@
 ---
-title: MyBatis-Spring对MyBatis的简化
+title: MyBatis-Spring配置及使用
 date: 2019-03-31 18:22:50
 tags: java
 ---
