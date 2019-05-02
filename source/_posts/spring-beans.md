@@ -176,8 +176,13 @@ public static void registerBeanDefinition(
 		}
 	}
 }
+
+// DefaultListableBeanFactory 对应的存储结构
+private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
 ```
 
 
 
-至此，我们就完成了一个xml文件的读取，解析并赋值给DefaultListableBeanFactory（BeanDefinitionRegistry接口的实现）的过程，之前我们说过 DefaultListableBeanFactory 主要实现的是两个接口，BeanDefinitionRegistry与 BeanFactory，现在我们只说了BeanDefinitionRegistry功能部分，下篇我们来讲解一下BeanFactory功能的部分，谢谢～
+至此，我们就完成了一个xml文件的读取，解析并赋值给DefaultListableBeanFactory（BeanDefinitionRegistry接口的实现）的过程
+
+之前我们说过 DefaultListableBeanFactory 主要实现的是两个接口，BeanDefinitionRegistry与 BeanFactory，现在我们只说了BeanDefinitionRegistry功能部分，下一篇我们来讲解一下BeanFactory功能的部分，谢谢～
