@@ -24,6 +24,8 @@ spring配置文件
 </beans>
 ```
 
+<!-- more -->
+
 对应要创建的bean的定义
 
 ```java
