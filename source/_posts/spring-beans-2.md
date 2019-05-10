@@ -142,19 +142,20 @@ Object:TestBean{name='testBeanName'}, beanName:testBean
 
 1.2 如果是alias名称，则获取到最终的bean名称
 
+<br>
 
 
 2.调用`AbstractBeanFactory.getSingleton(beanName)`，判断是否有缓存好的单例类，是则获取实例返回
 
-
+<br>
 
 3.如果当前的beanFactory中没有对应的bean，则从对应的parentBeanFactory中获取处理
 
-
+<br>
 
 4.标记当前beanName正在被创建中-markBeanAsCreated(beanName)
 
-
+<br>
 
 5.调用`RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName)`方法
 
@@ -166,9 +167,32 @@ Object:TestBean{name='testBeanName'}, beanName:testBean
 
 5.3 设置其默认的scope为 singleton
 
+<br>
 
+6.开始创建单例模式下的Bean  
 
-6.开始创建单例模式下的Bean  调用AbstractBeanFactory.getSingleton(beanName, new ObjectFactory…)
+```java
+// Create bean instance.
+if (mbd.isSingleton()) {
+    // 获取单例对象，如果是新创建的，则创建后添加到singletonObjects对应的Map中
+    sharedInstance = getSingleton(beanName, new ObjectFactory<Object>() {
+        @Override
+        public Object getObject() throws BeansException {
+            try {
+                return createBean(beanName, mbd, args);
+            }
+            catch (BeansException ex) {
+                destroySingleton(beanName);
+                throw ex;
+            }
+        }
+});
+// 此处用来处理FactoryBean相关的功能，从FactoryBean中获取其中真正的对象
+bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
+}
+```
+
+调用AbstractBeanFactory.getSingleton(beanName, new ObjectFactory…)
 
 它会调用`AbstractAutowireCapableBeanFactory#createBean(String, RootBeanDefinition, Object[])`来创建bean实例
 
@@ -176,7 +200,7 @@ Object:TestBean{name='testBeanName'}, beanName:testBean
 
 6.2 复制一个RootBeanDefinition实例，将之前得到的Class赋值给 BeanClass属性，供之后使用
 
-
+<br>
 
 7.调用`AbstractAutowireCapableBeanFactory#resolveBeforeInstantiation(beanName, mbdToUse)`
 
@@ -189,7 +213,7 @@ if (bean != null) {
 }
 ```
 
-
+<br>
 
 8.之后调用`AbstractAutowireCapableBeanFactory#doCreateBean`开始**真正创建bean实例**
 
@@ -229,11 +253,11 @@ private void invokeAwareMethods(final String beanName, final Object bean) {
 
 8.5.4 BeanPostProcessor接口实现的后置处理 `applyBeanPostProcessorsAfterInitialization`方法
 
-
+<br>
 
 9.注册销毁方法 ` DisposableBean.destroy`及自定义的 destroyMethod
 
-
+<br>
 
 10.返回最终创建的bean实例，创建结束
 
