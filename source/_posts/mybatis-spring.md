@@ -7,6 +7,8 @@ tags: java
 ## MyBatis 基本用法
 
 
+MyBatis是我们常用的ORM框架，先看一下它的基本用法(省略了Mapper相关的配置项):
+
 ```java
 // 读取MyBatis配置文件
 InputStream inputStream = Resources.getResourceAsStream("mybatis-config.xml");
@@ -22,13 +24,75 @@ User user = mapper.findById(1);
 session.close();
 ```
 
-
-
 ## MyBatis-Spring
 
-MyBatis-Spring对于其中关键的 `SqlSessionFactoryBuilder`、`SqlSession`、`Mapper接口`等提供了替代的Bean，避免了手动创建管理的麻烦，只需要配置对应的类即可注入使用，很方便
+工作中最常用的还是与Spring结合，使用mybatis-spring
+
+```xml
+<dependency>
+  <groupId>org.mybatis</groupId>
+  <artifactId>mybatis-spring</artifactId>
+  <version>2.0.1</version>
+</dependency>
+```
 
 <!-- more -->
+
+
+看一下mybatis-spring的主要配置及使用
+
+spring-mybatis.xml
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 使用Spring提供的简单的DataSource -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="url" value="jdbc:mysql://localhost:3306/demo" />
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="username" value="root" />
+        <property name="password" value="root" />
+    </bean>
+
+    <!-- 声明 SqlSessionFactoryBean -->
+    <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 指定数据源 -->
+        <property name="dataSource" ref="dataSource" />
+        <!-- 指定Mapper文件所在的路径 -->
+        <property name="mapperLocations" value="classpath:mapper/*.xml" />
+        <!-- 加载配置文件 -->
+        <property name="configLocation" value="mybatis-config.xml" />
+    </bean>
+
+    <!-- 声明扫描的包，创建对应的 MapperFactoryBean -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.zavier.demo.dao" />
+    </bean>
+
+</beans>
+```
+
+main方法
+
+```java
+ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("spring-mybatis.xml");
+UserMapper userMapper = applicationContext.getBean("userMapper", UserMapper.class);
+
+UserDO userDO = new UserDO();
+userDO.setUserName("testname");
+userDO.setUserAge(1);
+userMapper.save(userDO);
+
+userDO = userMapper.findById(1);
+System.out.println(userDO);
+```
+
+下面分析一下上面的配置
+
+MyBatis-Spring对于mybatis中关键的 `SqlSessionFactoryBuilder`、`SqlSession`、`Mapper接口`等提供了替代的Bean，避免了手动创建管理的麻烦，只需要配置对应的类即可注入使用，很方便
+
 
 一、 对于`SqlSessionFactoryBuilder`，使用`sqlSessionFactoryBean` （实现了Spring的FactoryBean）替代，用来创建 `SqlSessionFactory`
 
@@ -97,7 +161,8 @@ private class SqlSessionInterceptor implements InvocationHandler {
 </bean>
 ```
 
-之后可以注入此 sqlSession正常使用
+之后可以注入此 sqlSession正常使用，但是我们一般也不需要使用此配置项创建session，通过session来获取mapper进行执行查询等操作，而是直接创建mapper的bean，让容器注入到对应位置，直接执行。
+我们接着往下看
 
 
 
@@ -138,7 +203,7 @@ public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements Factor
 
 ```xml
 <bean id="userMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
-  <!-- 指定接口，接口对应的mapper文件需要在sqlSessionFActory中指定 -->
+  <!-- 指定接口，接口对应的mapper文件需要在sqlSessionFactory中指定 -->
   <property name="mapperInterface" value="org.mybatis.spring.sample.mapper.UserMapper" />
   <property name="sqlSessionFactory" ref="sqlSessionFactory" />
 </bean>
@@ -160,9 +225,11 @@ public class FooServiceImpl implements FooService {
 }
 ```
 
+但是这样还是很麻烦，我们需要为每一个Mapper添加对应配置，有没有办法可以自动完成这个操作，而不用手动创建Mapper Bean呢，
+答案当然是肯定的，继续来看
 
 
-四、使用 MapperScannerConfigurer 简化多个 MapperFactoryBean 声明，可以配置扫码的包，其下的接口会被自动创建成对应的 MapperFactoryBean
+四、使用 MapperScannerConfigurer 来简化多个 MapperFactoryBean 声明，配置扫描的包，其下的接口会被自动创建成对应的 MapperFactoryBean
 
 ```xml
 <!-- 扫描路径下的所有接口，自动将它们创建成 MapperFactoryBean -->
@@ -171,10 +238,35 @@ public class FooServiceImpl implements FooService {
 </bean>
 ```
 
-使用时可以直接注入对应的Mapper接口使用
+使用时可以直接注入对应的Mapper接口使用，具体可以回头看看之前的配置信息和使用例子
 
 
-附件一个简单的配置例子供参数： [mybatis-spring-demo](https://github.com/zavier/mybatis-spring-demo)
+五、mybatis-spring配置总结
+
+使用mybatis-spring，我们需要配置的项有三个
+
+- Datasource
+- SqlSessionFactoryBean
+- MapperScannerConfigurer
 
 
-* 以上暂不包括事务相关功能
+附一个简单的配置例子供参数： [mybatis-spring-demo](https://github.com/zavier/mybatis-spring-demo)
+
+另：
+
+如果需要使用Spring的事务处理功能，需要添加如下配置
+
+```xml
+<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+  <constructor-arg ref="dataSource" />
+</bean>
+```
+
+同时，如果要使用Spring的注解式事务，别忘了添加
+```xml
+<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="false"/>
+```
+这样就可以在需要事务的方法上添加`@Transactional`注解来实现事务了
+
+
+
