@@ -67,7 +67,8 @@ XmlBeanDefinitionReader.loadBeanDefinition
 ### 一、自定义标签
 
 ```java
-// 对应的方法为，这次我们先不进行跟踪讲解
+// 对应的方法如下，用来处理如 <mvc:annotation-driven /> 之类的其他命名空间的标签
+// 这次我们先不进入细看，感兴趣的可以进入看下
 delegate.parseCustomElement(root)
 ```
 
