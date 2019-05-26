@@ -41,7 +41,7 @@ SimpleBean bean = beanFactory.getBean(SimpleBean.class);
 
 先看一下最重要的BeanFactory实现类 `DefaultListableBeanFactory`的继承关系
 
-![](http://zhengw-tech.com/images/DefaultListableBeanFactory.png)
+![](/images/DefaultListableBeanFactory.png)
 
 在这个图中，我们能看出其主要是实现了两个接口
 
