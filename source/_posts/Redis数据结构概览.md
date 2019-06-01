@@ -8,7 +8,7 @@ Redis支持的主要有5种数据类型，`string`, `list`,  `set`,  `zset`  , `
 
 <!-- more -->
 
-![](http://zhengw-tech.com/images/redis-datastruct.jpg)
+![](/images/redis-datastruct.jpg)
 
 （注：对于Redis的早期版本，list 结构内部是使用双向链表实现的）
 
