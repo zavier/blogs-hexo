@@ -1,5 +1,5 @@
 ---
-title: redis rehash源码分析
+title: Redis Rehash源码分析
 date: 2019-06-02 02:35:01
 tags: redis
 ---
