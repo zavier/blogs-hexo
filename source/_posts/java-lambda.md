@@ -1,10 +1,10 @@
 ---
-title: 浅谈java Lambda表达式及其使用
+title: 浅谈Java Lambda表达式及其使用
 date: 2019-06-07 13:50:06
 tags: java
 ---
 
-## 什么是 lambda表达式？
+## 什么是 Lambda表达式？
 
 对于 Java 中的 lambda 表达式，我们可以把它简单的理解为一个函数。
 
