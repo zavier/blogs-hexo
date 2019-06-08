@@ -352,7 +352,7 @@ tag_icon: false
 
 # Wechat Subscriber
 wechat_subscriber:
-  enable: true
+  enable: false
   qcode: /images/wechat.jpg
   #description: e.g. subscribe to my blog by scanning my public wechat account
 
