@@ -19,7 +19,7 @@ public class MockRedisServer {
         ServerSocket serverSocket = new ServerSocket(6379);
         Socket socket = serverSocket.accept();
         try (InputStream inputStream = socket.getInputStream();
-             final OutputStream outputStream = socket.getOutputStream()) {
+            final OutputStream outputStream = socket.getOutputStream()) {
             byte[] data = new byte[1024];
             final int read = inputStream.read(data);
             final byte[] bytes = Arrays.copyOf(data, read);
