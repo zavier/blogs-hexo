@@ -1,7 +1,7 @@
 ---
 title: spring-beans 中 Bean解析创建过程（下）
 date: 2019-05-04 23:22:43
-tags: java
+tags: [java, spring]
 ---
 
 这篇来跟踪一下`AbstractBeanFactory#getBean(java.lang.String, java.lang.Class<T>)`这个方法获取bean实例的流程，由于过程比较复杂，我们这里以一个简单的例子来跟进一下主要流程，具体未用到的创建细节大家有兴趣可以自己查看一下源码～
