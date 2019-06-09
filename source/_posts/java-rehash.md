@@ -196,7 +196,7 @@ final Node<K,V>[] resize() {
 
 这样其实我们就可以得到之前的结论了，对于上面的例子，如果hash结果的倒数第5位是0，那么重新hash后他还在原位置，否则就会在原基础上增加的二进制值是`10000`（oldSize），即 oldIndex + oldSize
 
-基本已经就绪，我们来看代码
+准备工作已经结束，下面我们来分析这部分代码
 
 ```java
 // loHead对应的是rehash后还在原位置的，hiHead对应的是newIndex = oldIndex + oldSize
