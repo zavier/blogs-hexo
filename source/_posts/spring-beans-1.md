@@ -6,7 +6,7 @@ tags: [java, spring]
 
 
 
-spring-beans虽然是一个很基础的包，但是它已经包括的很多的功能，我们先看下如何在只使用spring-beans的情况下，解析并拿到xml中配置的bean实例
+spring-beans虽然是一个很基础的包，但是它已经包括了很多的功能，我们先看下如何在只使用spring-beans包的情况下，解析并拿到xml中配置的bean实例
 
 spring-bean.xml
 
