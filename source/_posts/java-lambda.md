@@ -186,4 +186,93 @@ System.out.println(compose.apply(10));
 
 
 
+## 附：Java8其他
+
+### 流的扁平化-flatMap
+
+flatMap方法让你把一个流中的每个值都换成另一个流，然后把所有的流连接起来成为一个流
+```java
+// 获取所有的各不相同的字符
+List<String> words = Arrays.asList("hello", "world");
+List<String> result = words.stream()
+        // 转换为字符串数组流
+        .map(word -> word.split(""))
+        // Arrays.stream会将数组转换成一个流，之后将其合并为一个流
+        .flatMap(Arrays::stream)
+        .distinct()
+        .collect(Collectors.toList());
+System.out.println(result);
+
+```
+
+```java
+// 生成所有数对，如：[(1,3), (1,3), (1,4), (2,3), (2,4), (3,3), (3,4)]
+List<Integer> num1 = Arrays.asList(1, 2, 3);
+List<Integer> num2 = Arrays.asList(3, 4);
+
+List<int[]> collect = num1.stream()
+        // 将每个num1中的数值转换为对应的流，并合成一个
+        .flatMap(n1 -> num2.stream().map(n2 -> new int[]{n1, n2}))
+        .collect(Collectors.toList());
+collect.stream()
+        .map(Arrays::toString)
+        .forEach(System.out::println);
+```
+
+
+### 查找和匹配
+#### 至少一个匹配
+`boolean b = words.stream().anyMatch("hello"::equals);`
+#### 匹配全部元素
+```
+boolean b1 = words.stream().allMatch("hello"::equals);
+boolean b2 = words.stream().noneMatch("hello"::equals);
+```
+#### 查找元素
+```
+Optional<String> h1 = words.stream().filter("hello"::equals).findAny();
+Optional<String> h2 = words.stream().filter("hello"::equals).findFirst();
+```
+
+### 收集器接口
+```java
+/**
+ *
+ * @param <T> 要收集的项目的范型
+ * @param <A> 累加器的类型，累加器在收集过程中累积部分结果的对象
+ * @param <R> 收集操作得到的对象的类型
+ */
+interface Collector<T, A, R> {
+    /**
+     * 建立新的结果容器
+     */
+    Supplier<A> supplier();
+
+    /**
+     * 将元素添加到结果容器
+     */
+    BiConsumer<A, T> accumulator();
+
+    /**
+     * 对结果容器应用最终转换
+     */
+    Function<A, R> finisher();
+
+    /**
+     * 合并两个结果容器（并行处理使用）
+     */
+    BinaryOperator<A> combiner();
+
+    /**
+     * 定义收集器的行为（是否可以并行归约等）
+     * @return
+     */
+    Set<Characteristics> characteristics();
+}
+```
+
+> 具体例子可参考 `Collectors.toList`实现
+
+
+
 参考资料：《Java8 实战》
