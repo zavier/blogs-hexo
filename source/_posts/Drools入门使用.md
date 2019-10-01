@@ -5,6 +5,11 @@ tags: drools
 ---
 
 
+
+Drools是一款基于Java语言的开源规则引擎，通过drools特定的语法，将复杂多变的业务规则统一管理。
+
+
+
 ## 环境配置
 
 ### 一、使用`maven`创建项目
@@ -37,6 +42,8 @@ tags: drools
 
 </project>
 ```
+
+<!-- more -->
 
 ### 二、创建kmodule.xml文件
 
