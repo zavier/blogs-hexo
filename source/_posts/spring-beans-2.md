@@ -20,7 +20,6 @@ spring配置文件
 
     <bean class="com.zavier.spring.beans.TestBean"
           id="testBean" init-method="myinit" destroy-method="mydestroy">
-        <property name="name" value="testBeanName" />
     </bean>
 
 </beans>
@@ -49,12 +48,12 @@ public class TestBean implements BeanNameAware, BeanFactoryAware,
 
     @Override
     public void setBeanName(String name) {
-        System.out.println("执行 BeanNameAware 接口的 setBeanName 方法，用来声明 Bean 名称");
+        System.out.println("执行 BeanNameAware 接口的 setBeanName 方法，获取设置 Bean 名称");
     }
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        System.out.println("执行 BeanFactoryAware 接口的 setBeanFactory 方法，用来声明其所在的 BeanFactory");
+        System.out.println("执行 BeanFactoryAware 接口的 setBeanFactory 方法，获取设置 BeanFactory");
     }
 
     public void myinit() {
@@ -75,19 +74,17 @@ public static void main(String[] args) {
     DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
     XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);
     beanDefinitionReader.loadBeanDefinitions(resource);
-    // 手动注册beanPostProcessor（只要是实现BeanPostProcessor接口的类即可，不必须是TestBean）
-    beanFactory.addBeanPostProcessor(new TestBean());
 
     TestBean bean = beanFactory.getBean("testBean", TestBean.class);
 }
 ```
 
-执行结果如下
+执行结果如下, 从中可以看出Bean的部分生命周期
 
 ```java
 执行无参构造器
-执行 BeanNameAware 接口的 setBeanName 方法，用来声明 Bean 名称
-执行 BeanFactoryAware 接口的 setBeanFactory 方法，用来声明其所在的 BeanFactory
+执行 BeanNameAware 接口的 setBeanName 方法，获取设置 Bean 名称
+执行 BeanFactoryAware 接口的 setBeanFactory 方法，获取设置 BeanFactory
 执行 InitializingBean 接口的 afterPropertiesSet 方法进行初始化
 执行自己在配置文件中定义的初始化方法
 ```
@@ -158,6 +155,35 @@ protected Object initializeBean(String beanName, Object bean, RootBeanDefinition
 
 
 ### 3.返回最终创建的bean实例，创建结束
+
+
+
+## 其他
+
+在Bean的整个声明周期中, 有部分环节我们可以插入自己的代码来对bean进行修改等操作,完成一些特定的功能
+
+比如在上面的`initializeBean`方法中, 可以在调用初始化方法前后执行我们实现的`BeanPostProcessor`对bean进行修改、甚至替换等操作
+
+```java
+public class MyBeanPostProcessor implements BeanPostProcessor {
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        // 执行bean的初始化方法前，可以对其进行修改
+        return bean;
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        // 执行bean的初始化方法后，可以对其进行修改，甚至替换（比如代理等）并返回替换后的类
+        return bean;
+    }
+}
+```
+
+举个简单的例子, 比如要实现一个自定义注解, 就可以结合spring的注解使用, 让spring帮我们扫描后, 我们在postprocessor中再过滤出有对应注解的类,收集或进行修改等其他处理
+
+或者实现代理的一些功能等
+
 
 
 
