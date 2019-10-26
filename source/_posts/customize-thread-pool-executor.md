@@ -50,7 +50,7 @@ threadPoolExecutor.executor(() -> System.out.println("execute"));
 
 
 
-## 线程池基本信息获取
+## 线程池监控
 
 对于当前线程池中的线程数量，执行总任务数等信息也可以通过`ThreadPoolExecutor`提供的对应方法来获取
 
