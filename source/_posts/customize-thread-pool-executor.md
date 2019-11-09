@@ -27,7 +27,7 @@ int maximumPoolSize,                  // 最大线程数
 long keepAliveTime,                   // 超出核心数线程的最大空闲存活时间
 TimeUnit unit,                        // 空闲存活时间的时间单位
 BlockingQueue<Runnable> workQueue,    // 任务队列
-ThreadFactory threadFactory,          // 线程工厂，可以在此设置线程是否为后台线程等
+ThreadFactory threadFactory,          // 线程工厂，可以在此设置线程是否为守护线程等
 RejectedExecutionHandler handler      // 饱和策略，任务队列满且线程数达到最大线程数时触发
 ```
 
