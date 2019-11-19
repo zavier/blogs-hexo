@@ -20,7 +20,7 @@ tags: [java, flink]
 
 2. 处理无序、延迟数据的能力
 
-
+<!-- more -->
 
 ## Flink对流计算提供的支持
 1. 同时支持高吞吐、低延迟、高性能(spark支持高吞吐和高性能，strom支持低延迟高性能)
@@ -54,7 +54,7 @@ tags: [java, flink]
 - 全局窗口
   - 所有的数据都在一个窗口中, 此窗口需要自己出发trigger来进行计算
 
-## 窗口数据计算处理
+### 窗口数据计算处理
 
 在窗口结束,触发trigger来进行计算时可以使用如下函数
 
@@ -63,11 +63,11 @@ tags: [java, flink]
 - FoldFunction       与外部元素合并(@Deprecated,使用AggregateFunction)
 - ProcessWindowFunction 对窗口中的所有元素一起进行计算（耗性能）
 
-## 数据清理(可选)
+### 数据清理(可选)
 
 对进入windowFunction前后的数据进行剔除处理
 
-## 窗口使用API
+### 窗口使用API
 
 
 ```java
@@ -127,7 +127,7 @@ DataStream<String> sideOutput = max.getSideOutput(outputTag); // 处理延迟的
 
 对于处理过程中的状态数据, 分为了 Keyed State(和key有关) 与 Operator State(和key无关)
 
-对于keyed state, flink提供了managed state来帮助用户简化使用, 在发生异常时会进行持久化, 之后可通过保存的数据进行任务恢复, 同时用户也可以使用row state, 自己实现相关的操作
+flink还提供了managed state来帮助用户简化使用, 在发生异常时会进行持久化, 之后可通过保存的数据进行任务恢复, 同时用户也可以使用row state, 自己实现序列化等操作
 
 Managed State有如下几种
 
