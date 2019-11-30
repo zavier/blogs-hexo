@@ -172,5 +172,5 @@ public class OrderEventListener {
 
 **注意：如果方法需要返回值的时候，需要让方法返回Future**
 
-这类方法也可使用CompletableFuture异步编排实现
+注解实现可参考`AsyncExecutionInterceptor`类， 同时异步方法也可使用CompletableFuture异步编排实现
 
