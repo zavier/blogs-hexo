@@ -28,7 +28,7 @@ protected Object initializeBean(String beanName, Object bean, RootBeanDefinition
 
 Spring AOP的基本接口是 `Advisor`, 它持有一个 AOP Advice「在joinpoint处要执行的增强行为」, 同时还持有一个决定 Advice是否适用的过滤器, 如pointcut;  也就是说 `Advisor`决定是否要对某个方法进行增强以及增强的具体逻辑实现是什么
 
-![aop](images/aop.jpg)
+![aop](/images/aop.jpg)
 
 还有一个我们需要注意的接口就是`Interceptor`, 这个接口继承了`Advice`, 也就是说它是用来对方法进行修改增强的, 它还有一些子类, 如`MethodBeforeAdviceInterceptor`用来在方法执行前进行处理, `MethodInterceptor`用来在方法执行前后进行自定义逻辑处理
 
@@ -40,43 +40,41 @@ Spring AOP的基本接口是 `Advisor`, 它持有一个 AOP Advice「在joinpoin
 // ********  AbstractAutoProxyCreator   *********
 @Override
 public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) {
-	if (bean != null) {
-		Object cacheKey = getCacheKey(bean.getClass(), beanName);
-		if (this.earlyProxyReferences.remove(cacheKey) != bean) {
-      // 对类进行代理包装
-			return wrapIfNecessary(bean, beanName, cacheKey);
-		}
-	}
-	return bean;
+    if (bean != null) {
+        Object cacheKey = getCacheKey(bean.getClass(), beanName);
+        if (this.earlyProxyReferences.remove(cacheKey) != bean) {
+            // 对类进行代理包装
+            return wrapIfNecessary(bean, beanName, cacheKey);
+        }
+    }
+    return bean;
 }
 
 protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
-	if (StringUtils.hasLength(beanName) && this.targetSourcedBeans.contains(beanName)) {
-		return bean;
-	}
-	if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
-		return bean;
-	}
-	if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
-		this.advisedBeans.put(cacheKey, Boolean.FALSE);
-		return bean;
-	}
+    if (StringUtils.hasLength(beanName) && this.targetSourcedBeans.contains(beanName)) {
+        return bean;
+    }
+    if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
+    return bean;
+    }
+    if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
+        this.advisedBeans.put(cacheKey, Boolean.FALSE);
+        return bean;
+    }
 
-	// 如果有匹配的advice,则创建代理
-	Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
-	if (specificInterceptors != DO_NOT_PROXY) {
-		this.advisedBeans.put(cacheKey, Boolean.TRUE);
-    // 创建代理
-		Object proxy = createProxy(
-				bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
-		this.proxyTypes.put(cacheKey, proxy.getClass());
-		return proxy;
-	}
+    // 如果有匹配的advice,则创建代理
+    Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
+    if (specificInterceptors != DO_NOT_PROXY) {
+        this.advisedBeans.put(cacheKey, Boolean.TRUE);
+        // 创建代理
+        Object proxy = createProxy(bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
+        this.proxyTypes.put(cacheKey, proxy.getClass());
+        return proxy;
+    }
 
-	this.advisedBeans.put(cacheKey, Boolean.FALSE);
-	return bean;
+    this.advisedBeans.put(cacheKey, Boolean.FALSE);
+    return bean;
 }
-
 ```
 
 
