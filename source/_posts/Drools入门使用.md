@@ -144,6 +144,7 @@ rule "in使用"
 end
 ```
 
+或者可以反过来使用`contains`关键字
 
 
 #### 实体匹配 - not/ exists
