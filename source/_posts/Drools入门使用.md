@@ -81,6 +81,14 @@ public class SessionTest {
         ks.dispose();
     }
 }
+
+// 或者也可以不使用xml, 手动获取规则文件生成KieSession:
+KieHelper helper = new KieHelper();
+for (KieRuleInfo ruleInfo : rules) {
+    helper.addContent(ruleStr, ResourceType.DRL);
+}
+KieBase kieBase = helper.build();
+KieSession kieSession = kieBase.newKieSession();
 ```
 
 
