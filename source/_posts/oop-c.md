@@ -1,7 +1,7 @@
 ---
 title: C语言实现的封装，继承，多态
 date: 2020-01-27 13:22:36
-tags: [oop, c]
+tags: c
 ---
 
 提到面向对象编程，我们想到的就是封装、继承、多态，但是其实这几个特性并不是面向对象编程所独有的，C语言也是基本支持这三个特性的，下面我们来具体看下
@@ -38,6 +38,8 @@ double distance(struct Point* p1, struct Point* p2) {
   return sqrt(dx*dx + dy*dy);
 }
 ```
+
+<!-- more -->
 
 这样使用`point.h` 的程序就不知道 Point 的内部结构，实现了数据的封装，外部只能使用声明的两个函数，如：
 
