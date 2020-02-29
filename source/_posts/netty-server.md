@@ -16,7 +16,7 @@ Netty是什么呢？它是一款**异步**的**事件驱动**的网络应用程�
 
 <!-- more -->
 
-好了，下面我们看一段来自Netty官网的服务端代码
+好了，下面我们看一段来自[Netty官网](https://netty.io/wiki/user-guide-for-4.x.html)的服务端代码
 
 ```java
 public class DiscardServer {
@@ -38,6 +38,7 @@ public class DiscardServer {
              .childHandler(new ChannelInitializer<SocketChannel>() {
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {
+                     // 向其中添加自定义的处理器
                      ch.pipeline().addLast(new DiscardServerHandler());
                  }
              })
@@ -80,6 +81,32 @@ public class DiscardServer {
 3. 当有客户端发起连接时，selector会通知NioServerSocketChannel， 而NioServerSocketChannel会将数据转发到对应的处理链中
 4. 当处理链中的ServerBootstrapAcceptor接收到连接事件后，会获取对应的与客户端连接的channel，为其绑定初始阶段配置的handlerPipeline，并在NioServerSocketChannel(worker)中选择一个NioEventLoop进行注册，其中的Selector会负责监听事件，之后与此客户端的所有交互都由这个NioEventLoop中的线程负责执行
 5. NioServerSocketChannel的 bossGroup与 workerGroup可以共用一个的
+
+
+
+最后，再来介绍一下入站的Handler写法，同样是来自官网的demo
+
+```java
+// 继承 ChannelInboundHandlerAdapter 说明是入站事件的处理器
+public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
+
+    // 当有数据可以读取时，会调用此方法
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        // 这里可以进行对应的数据处理
+        ((ByteBuf) msg).release(); // (3)
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        // 发生异常时关闭连接
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+```
+
+与此对应的处理出队事件的处理器是`ChannelOutboundHandlerAdapter`，如要要使用继承此类重写要处理的事件方法即可
 
 
 
