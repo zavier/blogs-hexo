@@ -6,7 +6,7 @@ tags: [java, netty]
 
 最近因为工作原因，学习了一下Netty，这里写个笔记记录一下
 
-Netty是什么呢？它是一款**异步**的**事件驱动**的网络应用程序框架，使用它可以快速的开发出可维护的高性能的面向协议的服务器和客户端----《Netty实战》
+Netty是什么呢？它是一款**异步**的**事件驱动**的网络应用程序框架，使用它可以快速的开发出可维护的高性能的面向协议的服务器和客户端---《Netty实战》
 
 这是有两个关键词是异步和事件驱动，先来简单介绍一下
 
@@ -69,7 +69,7 @@ public class DiscardServer {
 2. NioEventLoop: 可以理解为单个线程，一个NioEventLoopGroup可以有多个NioEventLoop
 3. Selector:  可以理解为Java NIO中的选择器，负责监听通道事件，一个NioEventLoop有一个Selector
 4. Channel: 可以理解为Java NIO中的Channel通道，代表一个到客户端的连接，使用时需要注册到NioEventLoop中，NioEventLoop中可以有多个Channel，其中的Selector负责监听所有的channel事件
-5. handlePipeline/ handler :  每个channel有一个对应的处理链，链中的handler也分为**入站handler**(处理接收到的数据)和**出站handler**(处理将要发送的数据)，当selector监听到对应事件发生时，线程会依次调用链中hanler的对应方法处理数据
+5. HandlePipeline/ Handler :  每个channel有一个对应的处理链，链中的handler也分为**入站handler**(处理接收到的数据)和**出站handler**(处理将要发送的数据)，当selector监听到对应事件发生时，线程会依次调用链中hanler的对应方法处理数据
 
 
 
