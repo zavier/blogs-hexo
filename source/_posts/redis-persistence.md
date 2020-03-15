@@ -62,7 +62,7 @@ del k1
 
 我们可以通过配置`auto-aof-rewrite-percentage`和`auto-aof-rewrite-min-size`来控制重新的触发条件，或者可以手动执行`bgrewriteaof`来触发AOF重写
 
-重写时，会根据现有的数据，重新生成新的AOF文件，之后将在重写过程中产出的命令追加到AOF文件中，最后替换老的文件
+重写时，会根据现有的数据，重新生成新的AOF文件，之后将在重写执行过程中用户新产生的命令追加到此AOF文件中，最后替换老的文件
 
 
 
