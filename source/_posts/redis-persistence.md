@@ -25,9 +25,9 @@ rdbcompression yes   # 是否使用 LZF算法 压缩字符串
 dbfilename dump.rdb  # 持久化存储的文件名称
 
 # save <seconds> <changes>, 表示在多少秒内发生了指定次数的数据变化，那么就会进行RDB持久化
-save 900 1
-save 300 10
-save 60 10000
+save 900 1      # 900秒内有 1 次修改，就进行RDB持久化
+save 300 10     # 300秒内有 10 次修改，就进行RDB持久化
+save 60 10000   # 60秒内有 10000 次修改，就进行RDB持久化
 ```
 
 同时，我们也可以通过执行`save` (同步执行，会阻塞请求) 和`bgsave` (另起子进程执行，可以同时接受其他命令执行) 手动触发数据快照的创建
@@ -45,9 +45,9 @@ auto-aof-rewrite-percentage 100  # 代表当前AOF文件的大小和上一次重
 auto-aof-rewrite-min-size 64mb   # 表示触发AOF重写是的文件最小体积
 
 ## 同步文件配置（选择其中一个）
-# appendfsync always    # 命令写入aop后，让操作系统同步文件到磁盘中
-appendfsync everysec    # 命令写入aop，每秒种 让操作系统同步文件到磁盘中（默认）
-# appendfsync no        # 命令写入aop，让操作系统自行决定何时同步文件到磁盘中
+# appendfsync always    # 命令写入aop后，让操作系统同步文件到硬盘中
+appendfsync everysec    # 命令写入aop后，每秒种 让操作系统同步文件到硬盘中（默认）
+# appendfsync no        # 命令写入aop后，让操作系统自行决定何时同步文件到硬盘中
 
 ```
 
@@ -66,11 +66,27 @@ del k1
 
 
 
-其中还有一个同步文件配置，是因为调用操作系统写入时，并不一定会实时写入磁盘，而是写入到一个内存缓冲区，之后由操作系统不定时写入到磁盘。这本来是操作系统提升写入速度的机制，但是对于Redis来说却有可能导致数据的丢失，所以可以通过配置`appendfsync`控制刷到磁盘的频率，但这也需要平衡，每次都刷到磁盘会导致性能的下降，一般默认每秒一次即可
+其中还有一个同步文件配置，是因为调用操作系统写入时，并不一定会实时写入硬盘，而是写入到一个内存缓冲区，之后由操作系统不定时写入到硬盘。这本来是操作系统提升写入速度的机制，但是对于Redis来说却有可能导致数据的丢失，所以可以通过配置`appendfsync`控制刷到硬盘的频率，但这也需要平衡，每次都刷到硬盘会导致性能的下降，一般默认每秒一次即可
 
 
 
 RDB和AOF配置及状态也可以通过执行`info persistence`查看
+
+
+
+## 重启恢复
+
+在Redis重新启动时，因为aof数据相比rdb会更新一些，所以如果开启了AOF，并且aof文件存在，那么使用aof文件进行数据恢复，服务端日志打印
+
+`* DB loaded from append only file: 0.000 seconds`
+
+
+
+如果AOF关闭，rdb文件存在则加载rdb文件恢复数据，服务端打印如下日志
+
+`* DB loaded from disk: 0.000 seconds`
+
+
 
 
 
@@ -162,7 +178,7 @@ int rdbSaveRio(rio *rdb, int *error, int flags, rdbSaveInfo *rsi) {
 
 `FE 00`  FE对应的10进制是254，即RDB_OPCODE_SELECTDB, 结合后面的00就表示 select 0
 
-`FB 01 00`这个对应的是 RDB_OPCODE_RESIZEDB 表示 DB中的key数量为1个，有过期时间的为0个
+`FB 01 00`这个对应的是 RDB_OPCODE_RESIZEDB 表示 DB中的key数量为1个，有过期时间的key为0个
 
 `0002 6B6B 0276 76`中，最开始的 00 通过`0 = “String Encoding”`可以得知表示值类型为string，后面的 02 表示的是长度为2，之后的两个字节 6B6B 表示的是我们之前设置的键: kk，再之后的 02 表示的也是长度为2， 对应的 7676 表示的是设置的值：vv
 
