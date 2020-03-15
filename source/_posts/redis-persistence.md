@@ -170,8 +170,7 @@ int rdbSaveRio(rio *rdb, int *error, int flags, rdbSaveInfo *rsi) {
 所以现在直接跳过这部分内容，到数据部分，内容为
 
 ```
-二进制：  fe  00fb 0100 0002 6b6b 0276 76ff 3545 3136 adb7 3b22
-对应值：                   2 k k   2 v  v
+16进制：  fe  00fb 0100 0002 6b6b 0276 76ff 3545 3136 adb7 3b22
 ```
 
 一个一个顺序看下
@@ -180,7 +179,7 @@ int rdbSaveRio(rio *rdb, int *error, int flags, rdbSaveInfo *rsi) {
 
 `FB 01 00`这个对应的是 RDB_OPCODE_RESIZEDB 表示 DB中的key数量为1个，有过期时间的key为0个
 
-`0002 6B6B 0276 76`中，最开始的 00 通过`0 = “String Encoding”`可以得知表示值类型为string，后面的 02 表示的是长度为2，之后的两个字节 6B6B 表示的是我们之前设置的键: kk，再之后的 02 表示的也是长度为2， 对应的 7676 表示的是设置的值：vv
+`0002 6B6B 0276 76`中，最开始的 00 通过`0 = “String Encoding”`可以得知表示值类型为string，后面的 02 表示的是长度为2，之后的两个字节 6B6B（0x6B的10进制为107，对应ASCII码字符为k） 表示的是我们之前设置的键: kk，再之后的 02 表示的也是长度为2， 对应的 7676（0x76的10进制为118，对应ASCII码字符为v） 表示的是设置的值：vv
 
 紧接后面的 FF 对应的是RDB_OPCODE_EOF，标识RDB文件结束了
 
