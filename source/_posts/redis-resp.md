@@ -12,6 +12,8 @@ Redis我们都比较熟悉，可以用来做缓存、分布式锁等，但是，
 
 首先，让我们先使用先模拟一个服务端，使用`Jedis`进行连接查看
 
+
+
 ```java
 // 一个简单的demo
 public class MockRedisServer {
@@ -28,6 +30,8 @@ public class MockRedisServer {
     }
 }
 ```
+
+
 
 <!-- more -->
 
