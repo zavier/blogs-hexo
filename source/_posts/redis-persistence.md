@@ -173,7 +173,7 @@ int rdbSaveRio(rio *rdb, int *error, int flags, rdbSaveInfo *rsi) {
 16进制：  fe  00fb 0100 0002 6b6b 0276 76ff 3545 3136 adb7 3b22
 ```
 
-一个一个顺序看下
+依次顺序看下
 
 `FE 00`  FE对应的10进制是254，即RDB_OPCODE_SELECTDB, 结合后面的00就表示 select 0
 
