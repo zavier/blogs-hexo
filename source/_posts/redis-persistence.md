@@ -144,7 +144,7 @@ int rdbSaveRio(rio *rdb, int *error, int flags, rdbSaveInfo *rsi) {
         // 7. 写入db中有过期时间的key数量
         if (rdbSaveLen(rdb,expires_size) == -1) goto werr;
 
-				// 其余部分省略
+        // 其余部分省略
     }
 
 }
