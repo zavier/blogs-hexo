@@ -187,8 +187,6 @@ private static int nextIndex(int i, int len) {
 
 *ThreadLocalMap*：对比着我们看下ThreadLocalMap
 
-对比着我们看下ThreadLocalMap
-
 ```java
 // 计算索引的方法
 int i = key.threadLocalHashCode & (len-1);
