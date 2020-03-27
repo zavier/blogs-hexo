@@ -1,7 +1,7 @@
 ---
 title: MyBatis-Spring配置及使用
 date: 2019-03-31 18:22:50
-tags: [java, mybatis]
+tags: [java, mybatis, spring]
 ---
 
 ## MyBatis 基本用法
