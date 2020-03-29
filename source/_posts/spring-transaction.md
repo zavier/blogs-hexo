@@ -72,10 +72,10 @@ public interface TransactionDefinition {
     int ISOLATION_REPEATABLE_READ = Connection.TRANSACTION_REPEATABLE_READ;
     int ISOLATION_SERIALIZABLE = Connection.TRANSACTION_SERIALIZABLE;
 
-		// 超时时间
+    // 超时时间
     int TIMEOUT_DEFAULT = -1;
 
-		// 获取传递规则
+    // 获取传递规则
     int getPropagationBehavior();
     // 获取隔离级别
     int getIsolationLevel();
