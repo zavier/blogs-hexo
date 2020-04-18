@@ -111,8 +111,6 @@ TransactionManager中用于定义协议，通用的实现基本都在对应的�
 
 AbstractPlatformTransactionManager主要封装了传递规则等的处理逻辑，这里就先不进入具体分析了，大家有兴趣可以去看下对应的源码
 
-这里就不进入具体分析了，大家有兴趣可以去看下对应的源码
-
 
 
 ### DataSourceTransactionManager
@@ -363,7 +361,7 @@ abstract class TransactionAttributeSourcePointcut extends StaticMethodMatcherPoi
             return false;
         }
         TransactionAttributeSource tas = getTransactionAttributeSource();
-        // 如果有Transaction注解，则认为方法匹配成功
+        // 这里可以简单理解为，如果有Transactional注解，则认为方法匹配成功
         return (tas == null || tas.getTransactionAttribute(method, targetClass) != null);
     }
 }
