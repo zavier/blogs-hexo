@@ -755,9 +755,9 @@ baidu_analytics: 'd7e9ac20bfcbf1d8dff4cffb8eaa5caf'
 #growingio_analytics: #your projectId
 
 # Google Analytics
-#google_analytics:
-#  tracking_id:
-#  localhost_ignored: true
+google_analytics:
+  tracking_id: 'UA-163916658-1'
+  localhost_ignored: true
 
 # CNZZ count
 #cnzz_siteid:
