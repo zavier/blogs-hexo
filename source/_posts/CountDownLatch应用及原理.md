@@ -112,7 +112,9 @@ CountDownLath内部使用AbstractQueuedSynchronizer来实现
 
 将AQS中的staus用作CountDownLatch的初始值
 
-在**获取资源**时会判断status是否等于0，等于0则通过，都则加入AQS中的CLH队列阻塞等待
+在**获取资源**时会判断status是否等于0，等于0则通过，否则加入AQS中的CLH队列阻塞等待
+
+在**释放资源**时会对status进行减一操作，如果结果等于0则进行真正的释放操作，将等待队列中的任务唤醒执行
 
 CountDownLatch核心源码
 
