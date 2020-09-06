@@ -670,7 +670,7 @@ gitment:
 # Gitalk
 # Demo: https://gitalk.github.io
 gitalk:
-  enable: true
+  enable: false
   github_id: zavier # Github repo owner
   repo: blogs-comments # Repository name to store issues
   client_id: 7a8e1a711cb82d6415bd # Github Application Client ID
