@@ -23,7 +23,7 @@ Spring 不仅为我们提供了`IOC` , `AOP`功能外，还在这个基础上提
 首先创建对应的事件
 
 ```java
-// 订单创建事件，需要继承 ApplicationEvent
+// 订单创建事件，需要继承 ApplicationEvent（不是必须，也支持不继承此类）
 public class OrderCreatedEvent extends ApplicationEvent {
     private String orderSn;
 
