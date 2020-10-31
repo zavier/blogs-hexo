@@ -1,10 +1,10 @@
 ---
 title: 单元测试之Mock
 date: 2020-10-29 21:05:01
-tags: java
+tags: [java, 单元测试]
 ---
 
-单元测试是对我们写的代码的最小单元进行测试，一般来说就是对函数(方法)进行测试，大家都知道写单元测试的好处，但是具体要怎么写呢？被测试的类可能依赖外部的类或服务，这个依赖的外部接口如何Mock，依赖注入的类如何替换成自己Mock的类等等，下面就介绍一下常用的Mock方式
+单元测试是对我们写的代码的最小单元进行测试，一般来说就是对函数(方法)进行测试，大家都知道写单元测试的好处，但是具体要怎么写呢？被测试的类可能依赖外部的类或服务，这个依赖的外部接口如何Mock，依赖注入的类如何替换成自己Mock的类等等，下面就介绍一种常用的Mock方式
 
 <!-- more -->
 
@@ -14,10 +14,10 @@ tags: java
 
 ```xml
 <dependency>
-	<groupId>org.mockito</groupId>
-	<artifactId>mockito-all</artifactId>
-	<version>1.10.19</version>
-	<scope>test</scope>
+    <groupId>org.mockito</groupId>
+    <artifactId>mockito-all</artifactId>
+    <version>1.10.19</version>
+    <scope>test</scope>
 </dependency>
 ```
 
