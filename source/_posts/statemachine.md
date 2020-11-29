@@ -4,7 +4,7 @@ date: 2020-11-29 20:20:32
 tags: [状态机]
 ---
 
-之前通过[《状态模式》](2019/10/19/state-pattern/)介绍了一下状态模式的使用，这次我们来介绍一下有限状态机
+之前通过[《状态模式》](/2019/10/19/state-pattern/)介绍了一下状态模式的使用，这次我们来介绍一下有限状态机
 
 维基百科中是这样定义的：有限状态机(FSM)又称有限状态自动机(FSA)，简称状态机，是表示有限个状态以及在这些状态之间的转移和动作等行为的数学计算模型，在任何给定时间都可以恰好处于有限数量的状态之一
 
@@ -18,7 +18,7 @@ tags: [状态机]
 
 现在已经有了很多成熟开源的状态机可以使用，如 [Spring Statemachine](https://github.com/spring-projects/spring-statemachine)、[Squirrel Statemachine](https://github.com/hekailiang/squirrel)和[stateless4j](https://github.com/stateless4j/stateless4j)，平时工作如果需要，直接使用就好而不需要自己再开发，这次就以最轻量级的 stateless4j 为例来介绍一下状态机的使用
 
-还是使用《状态模式》中的闸机例子
+还是使用《敏捷软件开发：原则、模式与实践（C#版）》中的闸机例子
 
 ![trunstile](/images/trunstile.jpg)
 
