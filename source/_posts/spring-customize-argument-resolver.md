@@ -35,7 +35,10 @@ public Long save(@RequestBody User user) {
 
 <!-- more -->
 
+## 使用
+
 先来看下GET方法，入参太多时我们会定义类，但是类中的属性必须是和参数名一致，也不能进行嵌套，不然就无法转换，比如下面这种定义
+
 ```Java
 public class SearchUserParam {
     // 基本信息查询
@@ -137,4 +140,221 @@ public class User {
 ```
 这样就实现了自定义的序列化与反序列化，当然我们也可以根据自己的实际需求实现更复杂的转换
 
-关于SpringMVC中自定义参数的转换使用基本就是这些，如有错误欢迎指正
+
+
+## 原理
+
+这个参数解析的原理比较简单，主要就是有一个参数解析器链，以类似责任链的方式进行处理，哪个解析器能处理就进行对应的处理，下面我们具体看下
+
+SpringMVC主要依靠 HandlerMapping 和 HandlerAdapter 来实现路由到方法的映射和方法调用的实现, HandlerMapping 用来处理请求和 Controller 中的方法映射关系及匹配，而 HandlerAdapter 则是用来在匹配到方法后进行实际的方法调用，包括其中的参数处理(使用 HandlerMethodArgumentResolver)
+这里我们主要看下最常用的 RequestMappingHandlerAdapter的处理过程
+
+```Java
+public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
+        implements BeanFactoryAware, InitializingBean {
+
+    // 初始化过程中会注册所有的参数解析器
+    @Override
+    public void afterPropertiesSet() {
+        initControllerAdviceCache();
+
+        if (this.argumentResolvers == null) {
+            List<HandlerMethodArgumentResolver> resolvers = getDefaultArgumentResolvers();
+            this.argumentResolvers = new HandlerMethodArgumentResolverComposite().addResolvers(resolvers);
+        }
+        if (this.initBinderArgumentResolvers == null) {
+            List<HandlerMethodArgumentResolver> resolvers = getDefaultInitBinderArgumentResolvers();
+            this.initBinderArgumentResolvers = new HandlerMethodArgumentResolverComposite().addResolvers(resolvers);
+        }
+        if (this.returnValueHandlers == null) {
+            List<HandlerMethodReturnValueHandler> handlers = getDefaultReturnValueHandlers();
+            this.returnValueHandlers = new HandlerMethodReturnValueHandlerComposite().addHandlers(handlers);
+        }
+    }
+
+    // 获取参数解析器
+    private List<HandlerMethodArgumentResolver> getDefaultArgumentResolvers() {
+        List<HandlerMethodArgumentResolver> resolvers = new ArrayList<>(30);
+
+        // 基于参数注解的参数解析器
+        resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), false));
+        resolvers.add(new RequestParamMapMethodArgumentResolver());
+        resolvers.add(new PathVariableMethodArgumentResolver());
+        resolvers.add(new PathVariableMapMethodArgumentResolver());
+        resolvers.add(new MatrixVariableMethodArgumentResolver());
+        resolvers.add(new MatrixVariableMapMethodArgumentResolver());
+        resolvers.add(new ServletModelAttributeMethodProcessor(false));
+        resolvers.add(new RequestResponseBodyMethodProcessor(getMessageConverters(), this.requestResponseBodyAdvice));
+        resolvers.add(new RequestPartMethodArgumentResolver(getMessageConverters(), this.requestResponseBodyAdvice));
+        resolvers.add(new RequestHeaderMethodArgumentResolver(getBeanFactory()));
+        resolvers.add(new RequestHeaderMapMethodArgumentResolver());
+        resolvers.add(new ServletCookieValueMethodArgumentResolver(getBeanFactory()));
+        resolvers.add(new ExpressionValueMethodArgumentResolver(getBeanFactory()));
+        resolvers.add(new SessionAttributeMethodArgumentResolver());
+        resolvers.add(new RequestAttributeMethodArgumentResolver());
+
+        // 基于参数类型的参数解析器
+        resolvers.add(new ServletRequestMethodArgumentResolver());
+        resolvers.add(new ServletResponseMethodArgumentResolver());
+        resolvers.add(new HttpEntityMethodProcessor(getMessageConverters(), this.requestResponseBodyAdvice));
+        resolvers.add(new RedirectAttributesMethodArgumentResolver());
+        resolvers.add(new ModelMethodProcessor());
+        resolvers.add(new MapMethodProcessor());
+        resolvers.add(new ErrorsMethodArgumentResolver());
+        resolvers.add(new SessionStatusMethodArgumentResolver());
+        resolvers.add(new UriComponentsBuilderMethodArgumentResolver());
+        if (KotlinDetector.isKotlinPresent()) {
+            resolvers.add(new ContinuationHandlerMethodArgumentResolver());
+        }
+
+        // 这里是我们自定义的参数解析器
+        if (getCustomArgumentResolvers() != null) {
+            resolvers.addAll(getCustomArgumentResolvers());
+        }
+
+        // Catch-all 其他的参数解析器
+        resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), true));
+        resolvers.add(new ServletModelAttributeMethodProcessor(true));
+
+        return resolvers;
+    }
+}
+```
+上面主要是一些初始化注册的逻辑，接下来看一下实际调用过程的处理
+
+```Java
+// RequestMappingHandlerAdapter.java （代码进行了简化）
+protected ModelAndView invokeHandlerMethod(HttpServletRequest request,
+        HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
+
+    ServletWebRequest webRequest = new ServletWebRequest(request, response);
+    try {
+        // 1. 创建调用方法
+        ServletInvocableHandlerMethod invocableMethod = createInvocableHandlerMethod(handlerMethod);
+
+        // 2. 实际调用方法
+        invocableMethod.invokeAndHandle(webRequest, mavContainer);
+
+        return getModelAndView(mavContainer, modelFactory, webRequest);
+    }
+    finally {
+        webRequest.requestCompleted();
+    }
+}
+
+protected ServletInvocableHandlerMethod createInvocableHandlerMethod(HandlerMethod handlerMethod) {
+    // 创建调用方法
+    return new ServletInvocableHandlerMethod(handlerMethod);
+}
+
+```
+
+调用方法处理在 ServletInvocableHandlerMethod 的父类 InvocableHandlerMethod 中
+```Java
+public class InvocableHandlerMethod extends HandlerMethod {
+    // resolvers中是参数解析器的组合，具体后面看下
+    private HandlerMethodArgumentResolverComposite resolvers = new HandlerMethodArgumentResolverComposite();
+
+    public Object invokeForRequest(NativeWebRequest request, ModelAndViewContainer mavContainer,
+            Object... providedArgs) throws Exception {
+
+        // 将请求中的参数转换为方法调用的参数
+        Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs);
+        if (logger.isTraceEnabled()) {
+            logger.trace("Arguments: " + Arrays.toString(args));
+        }
+        // 调用实际方法
+        return doInvoke(args);
+    }
+
+    protected Object[] getMethodArgumentValues(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
+            Object... providedArgs) throws Exception {
+
+        MethodParameter[] parameters = getMethodParameters();
+        if (ObjectUtils.isEmpty(parameters)) {
+            return EMPTY_ARGS;
+        }
+
+        Object[] args = new Object[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            MethodParameter parameter = parameters[i];
+            parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
+            args[i] = findProvidedArgument(parameter, providedArgs);
+            if (args[i] != null) {
+                continue;
+            }
+            // 1. 判断参数解析器中是否有支持此参数的解析
+            if (!this.resolvers.supportsParameter(parameter)) {
+                throw new IllegalStateException(formatArgumentError(parameter, "No suitable resolver"));
+            }
+            try {
+                // 2. 找到后调用对应解析器进行参数处理
+                args[i] = this.resolvers.resolveArgument(parameter, mavContainer, request, this.dataBinderFactory);
+            }
+            catch (Exception ex) {
+                throw ex;
+            }
+        }
+        return args;
+    }
+
+    protected Object doInvoke(Object... args) throws Exception {
+        Method method = getBridgedMethod();
+        ReflectionUtils.makeAccessible(method);
+        try {
+            if (KotlinDetector.isSuspendingFunction(method)) {
+                return CoroutinesUtils.invokeSuspendingFunction(method, getBean(), args);
+            }
+            // 反射调用方法
+            return method.invoke(getBean(), args);
+        }
+        catch (IllegalArgumentException ex) {
+            // 先忽略异常处理等
+        }
+    }
+}
+
+```
+
+最后看下上面resolvers(HandlerMethodArgumentResolverComposite)中的处理，在GET方法中我们写的自定义参数解析器也是在这里进行处理的
+```Java
+public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgumentResolver {
+    // 之前注册的参数解析器集合
+    private final List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<>();
+
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return getArgumentResolver(parameter) != null;
+    }
+
+    public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
+        HandlerMethodArgumentResolver resolver = getArgumentResolver(parameter);
+        if (resolver == null) {
+            throw new IllegalArgumentException("Unsupported parameter type [" +
+                    parameter.getParameterType().getName() + "]. supportsParameter should be called first.");
+        }
+        return resolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
+    }
+
+    // 遍历解析器集合，查询匹配的进行返回处理
+    private HandlerMethodArgumentResolver getArgumentResolver(MethodParameter parameter) {
+        HandlerMethodArgumentResolver result = this.argumentResolverCache.get(parameter);
+        if (result == null) {
+            for (HandlerMethodArgumentResolver resolver : this.argumentResolvers) {
+                // 如果支持对此参数类型进行解析，则返回这个解析器
+                if (resolver.supportsParameter(parameter)) {
+                    result = resolver;
+                    this.argumentResolverCache.put(parameter, result);
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+}
+```
+
+
+
+关于SpringMVC中自定义参数的转换内容基本就是这些，如有错误欢迎指正
