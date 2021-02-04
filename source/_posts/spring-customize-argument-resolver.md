@@ -95,6 +95,17 @@ public class SearchUserHandlerMethodArgumentResolver implements HandlerMethodArg
 }
 ```
 
+Spring中的 PageableHandlerMethodArgumentResolver 也是利用了这个原理，会将请求参数中的分页参数填充到请求参数接收类 Pageable 中，如：
+
+```Java
+public Page<User> pageUsers(Pageable pageable, QueryUser query) {
+    // 注册了 PageableHandlerMethodArgumentResolver 后， 请求url中的page、size参数会自动填充到 pageable 对应的实例中
+}
+```
+
+我们可以利用这个特性在接收参数中定义一些需要用到的类，然后通过参数解析器进行添加，如用户信息等
+
+
 上面说的是对于 GET 请求，接下来看下 POST 请求的处理，POST请求我们一般都是使用 json 这种格式作为入参和出参，而 SpringMVC 默认使用 jackson 进行响应的序列化和反序列化
 
 所以 POST 请求的处理我们直接借助于 jackson 提供的方法即可，通过实现 JsonSerializer 或 JsonDeserializer 来实现对应属性的序列化与反序列化，在借由 SpringMVC 提供的 @JsonComponent 注解等方式进行设置即可，下面举一个简单的例子
