@@ -6,9 +6,11 @@ tags: [java, spring]
 
 
 
-最近遇到这样一种场景，有一个扩展点接口，同时有多种实现，现在想在不需要重新部署项目的情况下，新增一种扩展点的实现
+我们在日常写代码的过程中，经常会有一个扩展点接口，同时会有多种实现，类似策略模式，在运行时动态获取具体的实现
 
-先想个简单的例子来说明一下，比如价格计算
+如果想在不需要重新部署项目的情况下，新增一种扩展点的实现并且能够生效使用，有什么方式呢？
+
+先想个简单的例子来说明一下上面说的场景，比如价格计算
 
 ```java
 interface PriceCalculater {
@@ -65,7 +67,7 @@ public class PriceCalculaterFactory implements ApplicationContextAware {
 
 
 
-这时候，要添加或更新一个外部jar包中定义的bean到当前应用要如何做呢？
+这时候，要添加或更新一个外部jar包中定义的bean（如新的某种计算策略）到当前应用要如何做呢？
 
 假设定义如下
 
@@ -113,7 +115,7 @@ classLoader.addFile(new File("xx/yy/cc.jar"));
 
 因为外部jar包中定义的类可能还需要依赖当前项目中的bean，所以一种可行的方式就是创建一个ApplicationContext，并将当前Spring的上下文设置为新创建的ApplicationContext的父上下文，这样当前上下文中找不到的bean会到父上下文中进行查找，可以顺利的添加依赖，完成bean的创建
 
-但是这时候还有一个问题就是我们加载外部class用的是自定义的类加载器，而当前spring相关类都是由applicationClassLoader加载的，它无法读取自定义类加载器加载的class，这时候也有一种方式，就是spring读取class的时候默认优先是从线程上下文类加载器进行加载的，所以我们可以把自定义类加载器设置为当前线程的上下文类加载器即可
+但是这时候还有一个问题就是我们加载外部class用的是自定义的类加载器，而当前spring相关类都是由applicationClassLoader加载的，它无法读取自定义类加载器加载的class，这时候也有一种方式，就是**spring读取class的时候默认优先是从线程上下文类加载器进行加载的**，所以我们可以把自定义类加载器设置为当前线程的上下文类加载器即可
 
 最后一步当然就是把创建好的bean添加到工厂中即可，总体代码如下
 
@@ -147,8 +149,11 @@ public class PriceCalculaterFactory implements ApplicationContextAware {
         newContext.scan("xxx.yyy");
         //    读取解析并创建bean
         newContext.refresh();
-        // 4. 将创建的bean注册到工厂中
-        priceCalculaterMap = newContext.getBeansOfType(PriceCalculater.class);
+        // 4. 将创建的bean注册到工厂中(这里可以注意下，子上下文的getBeansOfType方法获取不到父上下文中的bean)
+        Map<String, PriceCalculater> newMap = newContext.getBeansOfType(PriceCalculater.class);
+        if (!newMap.isEmpty()) {
+            priceCalculaterMap.putAll(newMap);
+        }
     }
 
     @Override
@@ -160,9 +165,9 @@ public class PriceCalculaterFactory implements ApplicationContextAware {
 
 
 
-下面只是一个简单的例子，抛砖引玉
+上面只是一个简单的例子，抛砖引玉
 
-对于上面的代码，Spring使用当前线程上下文类加载器加载类对应源码部分如下
+对于之前提到的，Spring使用当前线程上下文类加载器加载类对应源码部分如下
 
 ```java
 org.springframework.context.annotation.ClassPathBeanDefinitionScanner#scan
@@ -176,9 +181,10 @@ Resource[] resources = getResourcePatternResolver().getResources(packageSearchPa
             |- ClassUtils.getDefaultClassLoader(); 
 ```
 
-// ClassUtils.java
+
 
 ```java
+// ClassUtils.java
 public static ClassLoader getDefaultClassLoader() {
     ClassLoader cl = null;
     try {
@@ -208,3 +214,7 @@ public static ClassLoader getDefaultClassLoader() {
 
 
 如果有错误的地方，或者大家有更好的方案，欢迎提出指正，谢谢
+
+
+
+参考资料： [理解TCCL：线程上下文类加载器](https://benjaminwhx.com/2018/07/11/%E7%90%86%E8%A7%A3TCCL%EF%BC%9A%E7%BA%BF%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/)
