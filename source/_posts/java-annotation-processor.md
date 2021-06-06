@@ -165,7 +165,7 @@ public class User {
 
 引入处理器的包，编辑后即可在maven target目录下找到生成的文档文件
 
-![annotation-client-res](../images/annotation-client-res.jpg)
+![annotation-client-res](/images/annotation-client-res.jpg)
 
 
 
