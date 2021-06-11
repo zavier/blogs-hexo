@@ -169,9 +169,6 @@ public class User {
 
 
 
-完整代码位置：https://github.com/zavier/annotation-processor
-
-
 
 ## 参考资料
 
