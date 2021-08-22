@@ -4,7 +4,13 @@ date: 2020-03-22 16:46:11
 tags: java
 ---
 
-对于多线程并发对数据的修改的情况，其实除了使用锁或者CAS机制之外，有的情况我们完全可以为每一个线程分配单独的数据，这个数量只能在对应的线程下才能访问到，这样就能避免资源的争抢，JDK提供的对应功能的类就是ThreadLocal
+对于多线程并发对数据的修改的情况，其实除了使用锁或者CAS机制之外，有的情况我们完全可以为每一个线程分配单独的数据，这个数量只能在对应的线程下才能访问到，这样就能避免资源的争抢
+
+或者对于单次请求全局的一些信息，比如当前请求对应的用户信息，可以不通过参数的方式依次传递，而是在全局的一个地方维护，比如当请求进来时，就将当前用户的信息存储进去，但是因为我们的服务是多线程的，同时可能有很多的请求，所以需要用户信息有线程隔离的能力，不能访问到或覆盖了别的线程的用户信息
+
+JDK提供的对应功能的类就是ThreadLocal
+
+<!-- more -->
 
 ## 使用
 
@@ -35,8 +41,6 @@ private static void testGet() {
 }
 ```
 
-<!-- more -->
-
 输出结果如下：
 
 ```
@@ -45,8 +49,6 @@ private static void testGet() {
 ```
 
 即在哪个线程下设置的值，则只有在对应的线程下才能获取到，其他线程无法获取和操作
-
-比如在用户登录时，我们可以把用户信息设置到当前线程的ThreadLocal中，这样即使不用参数传递，后面执行的所有方法也可以获取到对应的值。当然，在使用结束后一定不要忘了调用`remove()`方法清除对应的值，不然在线程池等复用线程场景下会出现问题
 
 ## 原理
 
@@ -205,7 +207,7 @@ private static AtomicInteger nextHashCode =
 private static final int HASH_INCREMENT = 0x61c88647;
 ```
 
-很明显可以看出来，ThreadLocalMap的key对应的索引位计算并不依赖hashCode方法，而是使用了一个每次创建都会递增的一个值（0x61c88647这个值大家有兴趣可以去搜索了解一下）
+很明显可以看出来，ThreadLocalMap的key对应的索引位计算并不依赖hashCode方法，而是使用了一个每次创建都会递增的一个值（0x61c88647这个值大家有兴趣可以去搜索了解一下，主要就是为了hash值能均匀的分布在二次方的数组里）
 
 在哈希冲突时，也没有使用equals方法进行后续比较，而是直接使用了==比较，因为它不需要像我们业务处理时根据根据特定逻辑判断是否相等，不同的实例值一定不能互相覆盖，所以直接判断是否是同一个实例即可
 
@@ -460,6 +462,70 @@ private Entry getEntryAfterMiss(ThreadLocal<?> key, int i, Entry e) {
     return null;
 }
 ```
+
+
+
+## InheritableThreadLocal
+
+虽然ThreadLocal可以让我们创建线程独立的数据，但是有的时候又需要跨线程进行使用，比如在执行任务的时候，需要创建新的线程来加快执行速度，这时候新创建线程的时候需要把当前线程设置到ThreadLocal中的值传递进去，此时可以使用InheritableThreadLocal，使用方法同ThreadLocal
+
+在Thread类中，threadLocals 和 InheritableThreadLocal 都是其中的属性，源码部分如下
+
+```java
+public class Thread implements Runnable {
+  
+    /* ThreadLocal 使用 */
+    ThreadLocal.ThreadLocalMap threadLocals = null;
+
+    /*
+     * InheritableThreadLocal 使用
+     */
+    ThreadLocal.ThreadLocalMap inheritableThreadLocals = null;
+  
+    // 构造函数
+    public Thread() {
+        init(null, null, "Thread-" + nextThreadNum(), 0);
+    }
+  
+    private void init(ThreadGroup g, Runnable target, String name,
+                      long stackSize) {
+        init(g, target, name, stackSize, null, true);
+    }
+
+    private void init(ThreadGroup g, Runnable target, String name,
+                  long stackSize, AccessControlContext acc,
+                  boolean inheritThreadLocals) {
+        if (name == null) {
+            throw new NullPointerException("name cannot be null");
+        }
+      
+        // 忽略了一些代码，只看InheritableThreadLocal部分
+    
+        Thread parent = currentThread();
+    
+        this.group = g;
+        this.daemon = parent.isDaemon();
+        this.priority = parent.getPriority();
+        if (security == null || isCCLOverridden(parent.getClass()))
+            this.contextClassLoader = parent.getContextClassLoader();
+        else
+            this.contextClassLoader = parent.contextClassLoader;
+        this.inheritedAccessControlContext =
+                acc != null ? acc : AccessController.getContext();
+        this.target = target;
+        setPriority(priority);
+        // 这里将当前线程(非子线程)中的inheritableThreadLocals中的值复制到子线程中，这样子线程中就可以通过inheritableThreadLocal使用了
+        if (inheritThreadLocals && parent.inheritableThreadLocals != null)
+            this.inheritableThreadLocals =
+                ThreadLocal.createInheritedMap(parent.inheritableThreadLocals);
+
+        this.stackSize = stackSize;
+        tid = nextThreadID();
+    }
+}
+```
+
+需要注意的是，在直接创建子线程的时候可以通过inheritableThreadLocal进行传递，但是如果是线程池的场景，则无法这样使用
 
 
 
