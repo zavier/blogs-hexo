@@ -159,6 +159,45 @@ public class TransmittableThreadLocal<T> extends InheritableThreadLocal<T> imple
 }
 ```
 
+因为TransmittableThreadLocal中处理holder还有一个threadLocalHolder，所以对于使用了ThreadLocal，无法替换为TransmittableThreadLocal的情况，它也提供了对应的注册方法，可以注册到TransmittableThreadLocal的threadLocalHolder中
+
+```java
+// 使用注册代码
+Transmitter.registerThreadLocalWithShadowCopier(threadLocal);
+// 自己实现TtlCopier
+Transmitter.registerThreadLocal(threadLocal, copyLambda);
+// 不再使用后进行注销
+Transmitter.unregisterThreadLocal(threadLocal);
+```
+
+对应的部分源码：
+
+```java
+public static <T> boolean registerThreadLocalWithShadowCopier(@NonNull ThreadLocal<T> threadLocal) {
+    return registerThreadLocal(threadLocal, (TtlCopier<T>) shadowCopier, false);
+}
+
+public static <T> boolean registerThreadLocal(@NonNull ThreadLocal<T> threadLocal, @NonNull TtlCopier<T> copier, boolean force) {
+    if (threadLocal instanceof TransmittableThreadLocal) {
+        logger.warning("register a TransmittableThreadLocal instance, this is unnecessary!");
+        return true;
+    }
+
+    synchronized (threadLocalHolderUpdateLock) {
+        if (!force && threadLocalHolder.containsKey(threadLocal)) return false;
+
+        WeakHashMap<ThreadLocal<Object>, TtlCopier<Object>> newHolder = new WeakHashMap<ThreadLocal<Object>, TtlCopier<Object>>(threadLocalHolder);
+        newHolder.put((ThreadLocal<Object>) threadLocal, (TtlCopier<Object>) copier);
+        threadLocalHolder = newHolder;
+        return true;
+    }
+}
+```
+
+后面在处理的时候，可以发现对于holder和threadLocalHolder是处理逻辑是相同的
+
+
+
 ### Transmitter
 
 除此之外，还有一个很重要的类：Transmitter，它是TransmittableThreadLocal的一个内部类，主要用来在线程切换时进行数据的快照保存(capture)、重放(replay)和恢复(restore)，在看源码之前先看一下使用的例子
