@@ -196,6 +196,18 @@ public static <T> boolean registerThreadLocal(@NonNull ThreadLocal<T> threadLoca
 
 后面在处理的时候，可以发现对于holder和threadLocalHolder是处理逻辑是相同的
 
+同时，如果我们用深拷贝的需求，可以实现TransmittableThreadLocal子类，重写copy方法即可
+
+```java
+TransmittableThreadLocal<String> nameThreadLocal = new TransmittableThreadLocal<String>() {
+    @Override
+    public String copy(String parentValue) {
+        // 实现自己的复制逻辑
+        return super.copy(parentValue);
+    }
+};
+```
+
 
 
 ### Transmitter
