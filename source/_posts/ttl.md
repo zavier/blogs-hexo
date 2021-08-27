@@ -376,6 +376,11 @@ public final class TtlRunnable implements Runnable, TtlWrapper<Runnable>, TtlEnh
 
 其中我们还可以发现一个点就是Transmitter除了处理TransmittableThreadLocal中的holder，还用同样的方法处理使用它的一个静态成员变量threadLocalHolder
 
+```java
+// threadLocalHolder 与 holder 一个不同点是，它不是一个InheritableThreadLocal实例
+private static volatile WeakHashMap<ThreadLocal<Object>, TtlCopier<Object>> threadLocalHolder = new WeakHashMap<ThreadLocal<Object>, TtlCopier<Object>>();
+```
+
 这个threadLocalHolder的作用是对于在项目中使用了ThreadLocal，但是却无法替换为TransmittableThreadLocal的情况，可以使用Transmitter提供的注册方法，将项目中的threadLocal注册到它的threadLocalHolder中，后面进行capture等操作时holder和threadLocalHolder都会进行处理使用
 
 ```java
