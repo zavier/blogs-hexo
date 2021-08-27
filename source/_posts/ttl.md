@@ -159,44 +159,7 @@ public class TransmittableThreadLocal<T> extends InheritableThreadLocal<T> imple
 }
 ```
 
-因为TransmittableThreadLocal中处理holder还有一个threadLocalHolder，所以对于使用了ThreadLocal，无法替换为TransmittableThreadLocal的情况，它也提供了对应的注册方法，可以注册到TransmittableThreadLocal的threadLocalHolder中
-
-```java
-// 使用注册代码
-Transmitter.registerThreadLocalWithShadowCopier(threadLocal);
-// 自己实现TtlCopier
-Transmitter.registerThreadLocal(threadLocal, copyLambda);
-// 不再使用后进行注销
-Transmitter.unregisterThreadLocal(threadLocal);
-```
-
-对应的部分源码：
-
-```java
-public static <T> boolean registerThreadLocalWithShadowCopier(@NonNull ThreadLocal<T> threadLocal) {
-    return registerThreadLocal(threadLocal, (TtlCopier<T>) shadowCopier, false);
-}
-
-public static <T> boolean registerThreadLocal(@NonNull ThreadLocal<T> threadLocal, @NonNull TtlCopier<T> copier, boolean force) {
-    if (threadLocal instanceof TransmittableThreadLocal) {
-        logger.warning("register a TransmittableThreadLocal instance, this is unnecessary!");
-        return true;
-    }
-
-    synchronized (threadLocalHolderUpdateLock) {
-        if (!force && threadLocalHolder.containsKey(threadLocal)) return false;
-
-        WeakHashMap<ThreadLocal<Object>, TtlCopier<Object>> newHolder = new WeakHashMap<ThreadLocal<Object>, TtlCopier<Object>>(threadLocalHolder);
-        newHolder.put((ThreadLocal<Object>) threadLocal, (TtlCopier<Object>) copier);
-        threadLocalHolder = newHolder;
-        return true;
-    }
-}
-```
-
-后面在处理的时候，可以发现对于holder和threadLocalHolder是处理逻辑是相同的
-
-同时，如果我们用深拷贝的需求，可以实现TransmittableThreadLocal子类，重写copy方法即可
+同时需要注意的是，如果我们有深拷贝的需求，可以实现一个TransmittableThreadLocal子类，重写它的copy方法即可
 
 ```java
 TransmittableThreadLocal<String> nameThreadLocal = new TransmittableThreadLocal<String>() {
@@ -212,7 +175,7 @@ TransmittableThreadLocal<String> nameThreadLocal = new TransmittableThreadLocal<
 
 ### Transmitter
 
-除此之外，还有一个很重要的类：Transmitter，它是TransmittableThreadLocal的一个内部类，主要用来在线程切换时进行数据的快照保存(capture)、重放(replay)和恢复(restore)，在看源码之前先看一下使用的例子
+除此之外，还有一个很重要的类：Transmitter，它是TransmittableThreadLocal的一个内部类，其中的方法都是静态方法，主要用来在线程切换时进行数据的快照保存(capture)、重放(replay)和恢复(restore)，在看源码之前先看一下使用的例子
 
 1. 利用Transmitter将主线程的数据快照进行记录
 2. 在子线程/线程池中执行时，将记录的快照数据进行重新设置到当前线程，并将当前子线程的数据进行备份
@@ -260,7 +223,7 @@ public static class Transmitter {
         return ttl2Value;
     }
 
-    // 这个方式是用于将threadLocalHolder中的ThreadLocal复制出来
+    // 这个方式是用于将threadLocalHolder中的ThreadLocal复制出来（这个后面会介绍）
     private static HashMap<ThreadLocal<Object>, Object> captureThreadLocalValues() {
         final HashMap<ThreadLocal<Object>, Object> threadLocal2Value = new HashMap<ThreadLocal<Object>, Object>();
         for (Map.Entry<ThreadLocal<Object>, TtlCopier<Object>> entry : threadLocalHolder.entrySet()) {
@@ -273,7 +236,7 @@ public static class Transmitter {
     }
 }
 
-//快照类
+// 快照类
 private static class Snapshot {
     final HashMap<TransmittableThreadLocal<Object>, Object> ttl2Value;
     final HashMap<ThreadLocal<Object>, Object> threadLocal2Value;
@@ -407,6 +370,43 @@ public final class TtlRunnable implements Runnable, TtlWrapper<Runnable>, TtlEnh
             // 执行后将备份的数据恢复
             restore(backup);
         }
+    }
+}
+```
+
+其中我们还可以发现一个点就是Transmitter除了处理TransmittableThreadLocal中的holder，还用同样的方法处理使用它的一个静态成员变量threadLocalHolder
+
+这个threadLocalHolder的作用是对于在项目中使用了ThreadLocal，但是却无法替换为TransmittableThreadLocal的情况，可以使用Transmitter提供的注册方法，将项目中的threadLocal注册到它的threadLocalHolder中，后面进行capture等操作时holder和threadLocalHolder都会进行处理使用
+
+```java
+// 使用注册代码
+Transmitter.registerThreadLocalWithShadowCopier(threadLocal);
+// 自己实现TtlCopier
+Transmitter.registerThreadLocal(threadLocal, copyLambda);
+// 不再使用后进行注销
+Transmitter.unregisterThreadLocal(threadLocal);
+```
+
+对应的部分源码：
+
+```java
+public static <T> boolean registerThreadLocalWithShadowCopier(@NonNull ThreadLocal<T> threadLocal) {
+    return registerThreadLocal(threadLocal, (TtlCopier<T>) shadowCopier, false);
+}
+
+public static <T> boolean registerThreadLocal(@NonNull ThreadLocal<T> threadLocal, @NonNull TtlCopier<T> copier, boolean force) {
+    if (threadLocal instanceof TransmittableThreadLocal) {
+        logger.warning("register a TransmittableThreadLocal instance, this is unnecessary!");
+        return true;
+    }
+
+    synchronized (threadLocalHolderUpdateLock) {
+        if (!force && threadLocalHolder.containsKey(threadLocal)) return false;
+
+        WeakHashMap<ThreadLocal<Object>, TtlCopier<Object>> newHolder = new WeakHashMap<ThreadLocal<Object>, TtlCopier<Object>>(threadLocalHolder);
+        newHolder.put((ThreadLocal<Object>) threadLocal, (TtlCopier<Object>) copier);
+        threadLocalHolder = newHolder;
+        return true;
     }
 }
 ```
