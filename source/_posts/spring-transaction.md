@@ -99,7 +99,7 @@ TransactionStatus中主要是保存事务的状态，以及一些保存点（用
 ### AbstractPlatformTransactionManager
 
 ```java
-// AbstractPlatformTransactionManager 在定义了基本骨架后
+// AbstractPlatformTransactionManager 中定义了基本骨架
 // 留给子类实现的方法有如下等一些方法
 protected abstract Object doGetTransaction() throws TransactionException;
 protected abstract void doBegin(Object transaction, TransactionDefinition definition) throws TransactionException;
@@ -123,7 +123,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
     // 新建一个事务，注意其中的ConnectionHolder获取
     // TransactionSynchronizationManager 是一个基于 ThreadLocal的同步管理器
-    //  它会将对应的ConnectionHolder绑定到线程上
+    // 第一次调用时，其中没有值，ConnectionHolder值是null
     @Override
     protected Object doGetTransaction() {
         DataSourceTransactionObject txObject = new DataSourceTransactionObject();
@@ -181,7 +181,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
         }
     }
 
-    // 基本的通过连接提交事务， doRollback方法也类型，就不再贴代码了
+    // 基本的通过连接提交事务， doRollback方法也类似，就不再贴代码了
     @Override
     protected void doCommit(DefaultTransactionStatus status) {
         DataSourceTransactionObject txObject = (DataSourceTransactionObject) status.getTransaction();
@@ -200,9 +200,124 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 同时Spring使用基于 ThreadLocal 的 TransactionSynchronizationManager 进行事务资源的管理，如连接等
 
+```Java
+// TransactionSynchronizationManager 部分代码
+public abstract class TransactionSynchronizationManager {
+
+    private static final ThreadLocal<Map<Object, Object>> resources =
+            new NamedThreadLocal<Map<Object, Object>>("Transactional resources");
+    private static final ThreadLocal<Set<TransactionSynchronization>> synchronizations =
+            new NamedThreadLocal<Set<TransactionSynchronization>>("Transaction synchronizations");
+    private static final ThreadLocal<String> currentTransactionName =
+            new NamedThreadLocal<String>("Current transaction name");
+    private static final ThreadLocal<Boolean> currentTransactionReadOnly =
+            new NamedThreadLocal<Boolean>("Current transaction read-only status");
+    private static final ThreadLocal<Integer> currentTransactionIsolationLevel =
+            new NamedThreadLocal<Integer>("Current transaction isolation level");
+    private static final ThreadLocal<Boolean> actualTransactionActive =
+            new NamedThreadLocal<Boolean>("Actual transaction active");
+
+    
+    public static boolean hasResource(Object key) {
+        Object actualKey = TransactionSynchronizationUtils.unwrapResourceIfNecessary(key);
+        Object value = doGetResource(actualKey);
+        return (value != null);
+    }
+  
+    private static Object doGetResource(Object actualKey) {
+        Map<Object, Object> map = resources.get();
+        if (map == null) {
+            return null;
+        }
+        Object value = map.get(actualKey);
+        return value;
+    }
+  
+    public static void bindResource(Object key, Object value) throws IllegalStateException {
+        Object actualKey = TransactionSynchronizationUtils.unwrapResourceIfNecessary(key);
+        Assert.notNull(value, "Value must not be null");
+        Map<Object, Object> map = resources.get();
+        if (map == null) {
+            map = new HashMap<Object, Object>();
+            resources.set(map);
+        }
+        Object oldValue = map.put(actualKey, value);
+        
+    }
+}
+```
 
 
-### 注解式声明事务原理
+
+
+
+### 编程事事务
+
+有了以上的基础后，我们就可以使用编程式的方式来使用事务了，代码如下：
+
+```Java
+// dataSource与transactionManager都可以配置交给Spring管理
+DriverManagerDataSource dataSource = new DriverManagerDataSource("jdbc:mysql://xx", "root", "root");
+PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
+
+JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+def.setTimeout(5);
+TransactionStatus status = transactionManager.getTransaction(def);
+try {
+    // 事务操作
+    Integer integer = jdbcTemplate.queryForObject("select count(*) from hero", Integer.class);
+    System.out.println("count is: " + integer);
+    // 事务提交
+    transactionManager.commit(status);
+} catch (DataAccessException e) {
+    transactionManager.rollback(status);
+    throw e;
+}
+
+// 上述方法还可以使用org.springframework.transaction.support.TransactionTemplate来简化实现
+```
+
+其中`jdbcTemplate`最终会调用`org.springframework.jdbc.datasource.DataSourceUtils#doGetConnection`来获取连接资源
+
+```Java
+public static Connection doGetConnection(DataSource dataSource) throws SQLException {
+    // 调用 TransactionSynchronizationManager 的 getResource 方法
+    ConnectionHolder conHolder = (ConnectionHolder) TransactionSynchronizationManager.getResource(dataSource);
+    if (conHolder != null && (conHolder.hasConnection() || conHolder.isSynchronizedWithTransaction())) {
+        conHolder.requested();
+        if (!conHolder.hasConnection()) {
+            logger.debug("Fetching resumed JDBC Connection from DataSource");
+            conHolder.setConnection(dataSource.getConnection());
+        }
+        return conHolder.getConnection();
+    }
+
+    logger.debug("Fetching JDBC Connection from DataSource");
+    Connection con = dataSource.getConnection();
+    if (TransactionSynchronizationManager.isSynchronizationActive()) {
+        ConnectionHolder holderToUse = conHolder;
+        if (holderToUse == null) {
+            holderToUse = new ConnectionHolder(con);
+        }
+        else {
+            holderToUse.setConnection(con);
+        }
+        holderToUse.requested();
+        TransactionSynchronizationManager.registerSynchronization(
+                new DataSourceUtils.ConnectionSynchronization(holderToUse, dataSource));
+        holderToUse.setSynchronizedWithTransaction(true);
+        if (holderToUse != conHolder) {
+            TransactionSynchronizationManager.bindResource(dataSource, holderToUse);
+        }
+    }
+    return con;
+}
+```
+
+
+
+### 注解式声明事务
 
 介绍完DataSourceTransactionManager， 我们看下Spring是如何通过注解来实现使用事务的，目前我们配置的内容只有`<tx:annotation-driven transaction-manager="transactionManager" />`， 那么我们就从这里入手
 
