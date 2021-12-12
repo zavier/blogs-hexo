@@ -1,5 +1,5 @@
 ---
-title: thrift使用快速入门
+title: Thrift使用快速入门
 date: 2021-12-12 21:26:08
 tags: [java, thrift]
 ---
