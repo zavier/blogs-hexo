@@ -207,6 +207,8 @@ transport.close();
 
 待服务端启动后，再启动客户端即可获取对应的数据
 
+例子代码：https://github.com/zavier/thrift-demo
+
 
 
 以上就是thrift的基本使用方式，构造服务端和客户端的代码及实现原理我们后面继续进行分析。
