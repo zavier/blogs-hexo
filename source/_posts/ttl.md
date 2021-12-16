@@ -1,5 +1,5 @@
 ---
-title: transmittable-thread-local浅析
+title: transmittable-thread-local实现原理
 date: 2021-08-22 19:16:29
 tags: [java]
 ---
