@@ -1,5 +1,5 @@
 ---
-title: thrift处理流程分析
+title: Thrift处理流程分析
 date: 2021-12-18 14:14:46
 tags: [java, thrift]
 ---
@@ -149,7 +149,7 @@ public void serve() {
 
 
 
-### Client初始化及调用
+### client初始化及调用
 
 相关代码如下
 
