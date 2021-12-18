@@ -493,3 +493,7 @@ public static class searchUsers<I extends UserService.Iface> extends ProcessFunc
 
 
 以上即为简单的一次thrift调用和响应的实现逻辑流程
+
+简单总结一下就是thrift会为每种类型生成对应的一个结构，包括如果参数为多个字段也会合并生成一个结构TBase，其中会使用TProtocol（其中会使用TTransport进行消息发送）进行对应结构数据的写入和读取
+
+每次消息会被包装成一个TMessage，其中会包括方法名、消息类型及递增的一个序号(收到响应时用来进行对应)
