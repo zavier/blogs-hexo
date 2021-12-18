@@ -1,5 +1,5 @@
 ---
-title: thrift原理初探
+title: thrift处理流程分析
 date: 2021-12-18 14:14:46
 tags: [java, thrift]
 ---
