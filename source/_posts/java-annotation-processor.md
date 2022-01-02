@@ -141,7 +141,7 @@ public class DocProcessor extends AbstractProcessor {
             this.type = type;
         }
 
-				// 省略 getter setter方法
+	// 省略 getter setter方法
     }
 }
 
