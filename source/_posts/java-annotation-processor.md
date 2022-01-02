@@ -38,7 +38,7 @@ public @interface FieldDoc {
 
 ## 创建注解处理器
 
-创建用于根据注解生成文档的注解处理器，因为Processor需要SPI方式声明，即在META-INFO/services路径下创建文件（avax.annotation.processing.Processor）并在其中声明对应的实现com.github.zavier.processor.DocProcessor
+创建用于根据注解生成文档的注解处理器，因为Processor需要SPI方式声明，即在META-INFO/services路径下创建文件（javax.annotation.processing.Processor）并在其中声明对应的实现com.github.zavier.processor.DocProcessor
 
 这里我们使用google的 auto-service来简化声明流程
 
