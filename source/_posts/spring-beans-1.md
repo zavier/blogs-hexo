@@ -52,7 +52,9 @@ DefaultListableBeanFactory实现后，就可以通过beanDefinitionReader读取�
 
 
 
-那么`XmlBeanDefinitionReader`具体是如何解析xml文件，并将配置的bean信息注册给registry呢
+这篇文章中我们先看一下Bean信息的读取注册过程，也就是BeanDefinitionRegistry 接口的功能实现
+
+先看一下 `XmlBeanDefinitionReader`具体是如何解析xml文件，并将配置的bean信息注册给registry呢
 
 XmlBeanDefinitionReader.loadBeanDefinition
 
@@ -186,4 +188,4 @@ private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHash
 
 至此，我们就完成了一个xml文件的读取，解析并赋值给DefaultListableBeanFactory（BeanDefinitionRegistry接口的实现）的过程
 
-之前我们说过 DefaultListableBeanFactory 主要实现的是两个接口，BeanDefinitionRegistry与 BeanFactory，现在我们只说了BeanDefinitionRegistry功能部分，下一篇我们来讲解一下BeanFactory功能的部分，谢谢～
+之前我们说过 DefaultListableBeanFactory 主要实现的是两个接口，BeanDefinitionRegistry与 BeanFactory，现在我们只说了BeanDefinitionRegistry 读取注册Bean相关的功能，下一篇我们来接续讲解一下BeanFactory也是bean实例创建的部分，谢谢～
