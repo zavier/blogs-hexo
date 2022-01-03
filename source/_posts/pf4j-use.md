@@ -62,7 +62,7 @@ pom.xml修改
     <!-- 提供id和版本方便后续排查等使用 -->
     <plugin.id>email-plugin</plugin.id>
     <plugin.version>0.0.1</plugin.version>
-    <!-- 插件类，如果不关系声明周期可以不提供 -->
+    <!-- 插件类，如果不关心生命周期可以不提供 -->
     <plugin.class />
     <plugin.provider>user1</plugin.provider>
     <plugin.dependencies/>
