@@ -136,9 +136,9 @@ protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFa
 
 这里需要提一下，Bean中属性注入的依赖，是由以下两个BeanPostProcessor来分别进行处理的
 
-org.springframework.context.annotation.CommonAnnotationBeanPostProcessor（处理@Resource注解）
+org.springframework.context.annotation.CommonAnnotationBeanPostProcessor(处理@Resource)
 
-org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor（处理@Autowired注解）
+org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor(处理@Autowired)
 
 处理底层是一样的，这次我们就以CommonAnnotationBeanPostProcessor为例进行分析
 
