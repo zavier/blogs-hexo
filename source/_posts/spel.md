@@ -176,6 +176,20 @@ final Map value = expression.getValue(map, Map.class);
 // value: {key2=20, key3=30}
 ```
 
+如果过滤的时候只想取满足条件的第一个值或者最后一个值，可以使用`.^[selectionExpression]`或者`.$[selectionExpression]`来分别获取
+
+```java
+Expression expression1 = parser.parseExpression("#this.^[age>10]");
+Object value1 = expression1.getValue(userList);
+// value1: User(userName=zhangsan, age=18)
+
+Expression expression2 = parser.parseExpression("#this.$[age>10]");
+Object value2 = expression2.getValue(userList);
+// value2: User(userName=wangwu, age=20)
+```
+
+
+
 ### 数据映射转换
 
 通过`.![projectionExpression]`可以对数据进行转换
