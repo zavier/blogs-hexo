@@ -1,7 +1,7 @@
 ---
 title: spring事务基本原理
 date: 2020-03-29 09:48:42
-tags: [java, spring]
+tags: [java, spring, 事务]
 ---
 
 本文主要对基于XML和基于注解配置声明式事务的执行过程进行介绍，因为Spring的事务是基于AOP的，所以最好了解一些AOP相关的基础内容，下面我们就开始进入正文
