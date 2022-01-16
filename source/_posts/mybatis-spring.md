@@ -119,7 +119,7 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
   private final ExecutorType executorType;
   private final SqlSession sqlSessionProxy;
   public SqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType, PersistenceExceptionTranslator exceptionTranslator) {
-  // SqlSessionInterceptor会拦截，保证获取到新的 sqlSession来执行（线程安全）
+  // SqlSessionInterceptor代理SqlSession的方法
   this.sqlSessionProxy = (SqlSession) newProxyInstance(
         SqlSessionFactory.class.getClassLoader(),
         new Class[] { SqlSession.class },
@@ -136,7 +136,7 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
 private class SqlSessionInterceptor implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-	// 获取sqlSession
+    // 获取sqlSession，反射调用，获取的时候会从TransactionSynchronizationManager中获取线程相关的类
     SqlSession sqlSession = getSqlSession(
         SqlSessionTemplate.this.sqlSessionFactory,
         SqlSessionTemplate.this.executorType,
@@ -146,7 +146,7 @@ private class SqlSessionInterceptor implements InvocationHandler {
       return result;
     } catch (Throwable t) {
       Throwable unwrapped = unwrapThrowable(t);
-	  // 包装处理异常
+      // 包装处理异常
       throw unwrapped;
     }
   }
