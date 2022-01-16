@@ -263,9 +263,10 @@ PlatformTransactionManager transactionManager = new DataSourceTransactionManager
 JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 def.setTimeout(5);
+// 这里会将Connection设置到TransactionSynchronizationManager中(如果之前不存在)
 TransactionStatus status = transactionManager.getTransaction(def);
 try {
-    // 事务操作
+    // 事务操作，jdbcTemplate会优先从TransactionSynchronizationManager中获取连接
     Integer integer = jdbcTemplate.queryForObject("select count(*) from hero", Integer.class);
     System.out.println("count is: " + integer);
     // 事务提交
