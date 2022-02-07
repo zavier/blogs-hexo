@@ -1,5 +1,5 @@
 ---
-title: maven生命周期与插件笔记
+title: Maven生命周期与插件笔记
 date: 2021-09-25 22:24:06
 tags: [java, maven]
 ---

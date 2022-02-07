@@ -1,5 +1,5 @@
 ---
-title: maven聚合与继承
+title: Maven聚合与继承
 date: 2019-02-06 16:18:26
 tags: [java, maven]
 ---
