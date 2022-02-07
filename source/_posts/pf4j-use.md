@@ -1,5 +1,5 @@
 ---
-title: pf4j入门使用
+title: PF4J入门使用
 date: 2022-01-02 21:34:51
 tags: [java, pf4j]
 ---
