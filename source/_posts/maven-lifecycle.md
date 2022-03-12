@@ -146,3 +146,23 @@ public class MyMojo extends AbstractMojo {
 ```
 
 之后在命令行中执行`mvn org.example:maven-plugin-demo:1.0-SNAPSHOT:touchA`即可在target目录下发现创建的touch.txt文件
+
+如果想将其绑定到maven声明周期中自动执行，如编译阶段执行，那么可以配置如下
+
+```xml
+<plugin>
+    <groupId>org.example</groupId>
+    <artifactId>maven-plugin-demo</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <executions>
+        <execution>
+            <!-- 绑定的阶段 -->
+            <phase>compile</phase>
+            <goals>
+                <!-- 执行的目标 -->
+                <goal>touchA</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
