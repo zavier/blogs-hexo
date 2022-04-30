@@ -12,7 +12,7 @@ tags: [java, 定时任务]
 
 xxl-job的整体执行流程如下图所示
 
-<img src="/images/xxl-job.png" alt="xxl-job" style="zoom: 50%;" />
+<img src="/images/xxl-job.png" alt="整体执行流程" style="zoom: 50%;" />
 
 
 
@@ -52,7 +52,7 @@ public class SampleXxlJob {
 
 ### 执行器注册
 
-<img src="/images/xxl-job-registry.png" alt="xxl-job-registry" style="zoom:50%;" />
+<img src="/images/xxl-job-registry.png" alt="注册流程" style="zoom:50%;" />
 
 在执行器启动时，执行器会根据配置的调用中心地址，调用对应的接口了实现执行器的注册（以便后续调用器进行调度），注册后每隔30S还会进行一次心跳，证明自己还活着，在关闭时也会调用接口将自己摘除
 
@@ -66,7 +66,7 @@ xxl-job整体没有使用zookeeper之类的注册中心，在接收到执行器�
 
 ### 调度中心调度 
 
-<img src="/images/xxl-job-trigger.png" alt="image-20220430205411864" style="zoom:50%;" />
+<img src="/images/xxl-job-trigger.png" alt="调度执行流程" style="zoom:50%;" />
 
 
 
