@@ -1,7 +1,7 @@
 ---
 title: 分布式任务调度(xxl-job)
 date: 2022-04-30 17:48:06
-tags: [java]
+tags: [java, 定时任务]
 ---
 
 
