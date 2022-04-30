@@ -1,5 +1,5 @@
 ---
-title: 分布式任务调度(xxl-job)
+title: 分布式任务调度核心流程(xxl-job)
 date: 2022-04-30 17:48:06
 tags: [java, 定时任务]
 ---
