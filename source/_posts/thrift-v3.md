@@ -8,6 +8,12 @@ tags: [java, thrift]
 
 <!-- more -->
 
+
+
+<img src="/images/thrift.jpg" />
+
+
+
 之前我们也看过thrift支持的一些结构类型，如struct、string、map、list等，具体可以看下对应枚举
 
 ```java
