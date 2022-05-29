@@ -1,5 +1,5 @@
 ---
-title: Thrift协议使用
+title: Thrift(三)-协议使用
 date: 2021-12-19 23:04:14
 tags: [java, thrift]
 ---

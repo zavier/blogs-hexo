@@ -1,5 +1,5 @@
 ---
-title: Thrift-Java注解方式
+title: Thrift(四)-Java注解方式
 date: 2022-05-29 15:34:46
 tags: [java, thrift]
 ---

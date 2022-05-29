@@ -1,5 +1,5 @@
 ---
-title: Thrift处理流程分析
+title: Thrift(二)-处理流程分析
 date: 2021-12-18 14:14:46
 tags: [java, thrift]
 ---
