@@ -24,10 +24,6 @@ mybatis为基于3.5.10版本的代码
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <settings>
-        <!-- 开启开启自动驼峰命名规则映射 -->
-        <setting name="mapUnderscoreToCamelCase" value="true"/>
-    </settings>
     
     <environments default="development">
         <environment id="development">
