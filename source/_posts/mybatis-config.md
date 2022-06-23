@@ -563,7 +563,7 @@ public T getObject() throws Exception {
 </dependency>
 ```
 
-配置和mybatis-spring的配置基本相同，唯一的区别就是需要替换一个sqlSessionFactory为MybatisPlus中的类
+配置和mybatis-spring的配置基本相同，唯一的区别就是需要替换一个sqlSessionFactory为MybatisPlus中的类，同时如果类中的字段名称与数据库字段没有一致，可以在对应字段上面添加注解使用，详细内容参考官方文档
 
 ```xml
 <bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean">
@@ -699,6 +699,14 @@ public class SelectList extends AbstractMethod {
 小结一下，就是利用自定义的MybatisMapperAnnotationBuilder ，将固定一些方法的信息构造MappedStatement并添加到Configuration中，这样后续就可以直接从Configuration中获取使用
 
 不过这种方式替换了太多MyBatis的类，其中还有很多复制的代码然后进行修改，有种魔改的感觉～～
+
+当然，MyBatis-Plus也不仅仅只有这一个功能，其他还有包括逻辑删除、自动填充、Sql注入器等功能，具体可以查看对应的文档
+
+
+
+如果只是追求不写xml文件或者全自动，可以考虑下直接使用 [JPA](https://spring.io/projects/spring-data-jpa)
+
+以上内容没有包含Spring-Boot-Starter系列用法，原理基本都是一样的，只是对应starter包帮我们把手动配置的部分，自动进行了配置而已
 
 
 
