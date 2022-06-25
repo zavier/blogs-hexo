@@ -704,7 +704,117 @@ public class SelectList extends AbstractMethod {
 
 
 
-如果只是追求不写xml文件或者全自动，可以考虑下直接使用 [JPA](https://spring.io/projects/spring-data-jpa)
+## MyBatis-Mapper
+
+除了MyBatis-Plus这种方式，还有一个包也可以实现类似的功能-[MyBatis-Mapper](https://github.com/mybatis-mapper/mapper)，这种方式无需任何额外的配置，使用的MyBatis本身的扩展功能，不过只能支持MyBatis 3.5.1及以上版本
+
+```xml
+<!-- mybatis-mapper包 -->
+<dependency>
+    <groupId>io.mybatis</groupId>
+    <artifactId>mybatis-mapper</artifactId>
+    <version>1.2.2</version>
+</dependency>
+```
+
+### 配置使用
+
+```java
+// 首先需要添加类里面对应的表名和字段名注解
+@Table("t_user")
+@Data
+public class UserDO {
+    @Column(value = "id", id = true)
+    private Integer id;
+    @Column("user_name")
+    private String userName;
+    @Column("user_age")
+    private Integer userAge;
+}
+```
+
+其次Mapper需要继承mybatis-mapper中的Mapper接口，这样就可以直接使用父接口中的方法了
+
+```java
+public interface UserMapper extends Mapper<UserDO, Integer> {
+}
+```
+
+使用代码如下
+
+```java
+Optional<UserDO> userDO = userMapper.selectByPrimaryKey(1);
+```
+
+### 原理分析
+
+我们先看下mybatis-mapper中的Mapper接口
+
+```java
+// EntityMapper.java
+@Lang(Caching.class)
+// 使用 EntityProvider 中的 selectByPrimaryKey 方法生成SQL
+@SelectProvider(type = EntityProvider.class, method = "selectByPrimaryKey")
+Optional<T> selectByPrimaryKey(I id);
+```
+
+```java
+// EntityProvider.java
+public static String selectByPrimaryKey(ProviderContext providerContext) {
+    return SqlScript.caching(providerContext, new SqlScript() {
+        @Override
+        public String getSql(EntityTable entity) {
+            return "SELECT " + entity.baseColumnAsPropertyList()
+                + " FROM " + entity.table()
+                + where(() ->                 entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND ")));
+        }
+    });
+}
+```
+
+这部分的处理解析部分在 MapperAnnotationBuilder（处理Mapper接口中的注解信息） 中，其中会根据对应注解中的方法动态生成sql，创建MappedStatement并注册到Configuration中
+
+```java
+public class MapperAnnotationBuilder {
+    // 创建SQL语句的部分
+    private SqlSource buildSqlSource(Annotation annotation, Class<?> parameterType, LanguageDriver languageDriver, Method method) {
+        // 忽略其他部分代码，SelectProvider等会使用下面代码生成sql
+        return new ProviderSqlSource(assistant.getConfiguration(), annotation, type, method);
+    }
+}
+```
+
+```java
+public class ProviderSqlSource implements SqlSource {
+    public BoundSql getBoundSql(Object parameterObject) {
+        SqlSource sqlSource = createSqlSource(parameterObject);
+        return sqlSource.getBoundSql(parameterObject);
+    }
+    
+    private SqlSource createSqlSource(Object parameterObject) {
+        // 省略了大多数代码
+        String sql = invokeProviderMethod(parameterObject);
+        Class<?> parameterType = parameterObject == null ? Object.class : parameterObject.getClass();
+      return languageDriver.createSqlSource(configuration, sql, parameterType);
+    }
+    
+    private String invokeProviderMethod(Object... args) throws Exception {
+        Object targetObject = null;
+        if (!Modifier.isStatic(providerMethod.getModifiers())) {
+            targetObject = providerType.getDeclaredConstructor().newInstance();
+        }
+        // 反射调用的 EntityProvider 中的对应方法生成SQL
+        CharSequence sql = (CharSequence) providerMethod.invoke(targetObject, args);
+        return sql != null ? sql.toString() : null;
+    }
+}
+```
+
+知道了原理之后，我们也可以自定义Mapper，并且自己实现注解中的类和方法来动态生成SQL
+
+
+
+总之，如果只是追求不写xml文件或者全自动，可以考虑下直接使用 [JPA](https://spring.io/projects/spring-data-jpa)
 
 以上内容没有包含Spring-Boot-Starter系列用法，原理基本都是一样的，只是对应starter包帮我们把手动配置的部分，自动进行了配置而已
 
