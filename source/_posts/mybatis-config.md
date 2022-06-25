@@ -795,7 +795,7 @@ public class ProviderSqlSource implements SqlSource {
         // 省略了大多数代码
         String sql = invokeProviderMethod(parameterObject);
         Class<?> parameterType = parameterObject == null ? Object.class : parameterObject.getClass();
-      return languageDriver.createSqlSource(configuration, sql, parameterType);
+        return languageDriver.createSqlSource(configuration, sql, parameterType);
     }
     
     private String invokeProviderMethod(Object... args) throws Exception {
