@@ -12,7 +12,7 @@ tags: [java]
 
 ## 使用
 
-我们先看下JSONPath的使用，这里使用的是https://github.com/json-path/JsonPath，其README中已经提供了相关的介绍和使用示例，这里再简单介绍下，我们这里直接使用其中的示例数据
+我们先看下JSONPath的使用，这里使用的是[https://github.com/json-path/JsonPath](https://github.com/json-path/JsonPath)，其README中已经提供了相关的介绍和使用示例，这里再简单介绍下，我们这里直接使用其中的示例数据
 
 ```json
 {
