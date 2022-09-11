@@ -1,5 +1,5 @@
 ---
-title: JSONPath使用及原理简介
+title: JSONPath简介
 date: 2022-09-11 22:43:19
 tags: [java]
 ---
