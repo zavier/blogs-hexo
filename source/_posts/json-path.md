@@ -56,7 +56,7 @@ tags: [java]
 
 1. JSONPath的表达式都是以 `$` 开始，表示根节点
 
-2. 属性值获取：子节点可以使用 .\<name\> 来进行表示，如: `$.store.bicycle.color`  或者 `$['store']['bicycle']['color']`可以获取其中的color值
+2. 属性值获取：子节点可以使用 `.<name>` 来进行表示，如: `$.store.bicycle.color`  或者 `$['store']['bicycle']['color']`可以获取其中的color值
 
 3. 获取多个属性值：JSONPath表达式**最后一级**子节点可以同时获取多个值，如 `$['store']['bicycle']['color', 'price']`
 4. 数组数据获取：可以根据索引获取指定位置元素，如： `$.store.book[0,1]` 或者 `$.store.book[:2]` 或者 `$.store.book[-1]`
@@ -93,15 +93,14 @@ String newJson = JsonPath.parse(json).set("$['store']['book'][0]['author']", "Pa
 
 其中包含的token有如下几类
 
-- RootPathToken，根节点，支持表达式：`$`
-
-- PropertyPathToken，支持表达式: `.<name> 或 ['<name1>' (,'<name2>')] `
-- ArrayIndexToken，支持表达式：`[<number> (, <number>)]`
-- ArraySliceToken，支持表达式：`[start:end]`
-- WildcardPathToken，支持表达式： `* 或者 [*]`
-- PredicatePathToken，支持表达式：`[?(<expresion>)]`
-- ScanPathToken，支持表达式：`..<name>`
-- FunctionPathToken，用于支持内置的函数
+1. RootPathToken，根节点，支持表达式：`$`
+2. PropertyPathToken，支持表达式: `.<name> 或 ['<name1>' (,'<name2>')] `
+3. ArrayIndexToken，支持表达式：`[<number> (, <number>)]`
+4. ArraySliceToken，支持表达式：`[start:end]`
+5. WildcardPathToken，支持表达式： `* 或者 [*]`
+6. PredicatePathToken，支持表达式：`[?(<expresion>)]`
+7. ScanPathToken，支持表达式：`..<name>`
+8. FunctionPathToken，用于支持内置的函数
 
 这样就可以将对应的表达式映射成一系列的token，然后依次解析，我们以获取属性使用的PropertyPathToken来看下解析过程
 
