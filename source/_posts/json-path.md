@@ -1,7 +1,7 @@
 ---
 title: JSONPath简介
 date: 2022-09-11 22:43:19
-tags: [java]
+tags: [java, json]
 ---
 
 JSON目前是使用的比较多的一种数据格式，前后端的交互就是都是使用JSON格式，后端存储的时候就算使用MySQL，有时候也会存在使用字符串等类型字段存储JSON数据，或者NoSQL数据库，现在MySQL也支持了JSON类型字段并提供相关的语法
