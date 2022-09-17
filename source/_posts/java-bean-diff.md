@@ -154,3 +154,4 @@ public class Person implements Diffable<Person> {
 {"addressList":["Address(province=aa, city=bb)","Address(province=bb, city=cc)"],"name":"aa","smoker":true} differs from {"addressList":["Address(province=aa, city=bb)","Address(province=bb, city=dd)"],"name":"bb","smoker":false}
 ```
 
+这种可能就需要我们根据实际的需求，进行相关的功能改造来进行支持，或者将commons-lang3中的相关代码复制出来进行改造
