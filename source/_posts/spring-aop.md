@@ -6,7 +6,7 @@ tags: [spring, java]
 
 
 
-看过了前面的[Spring Beans](tags/spring/)相关的 IOC 功能, 接下来我们来看看 AOP 是如何实现的
+看过了前面的[Spring Beans](/tags/spring/)相关的 IOC 功能, 接下来我们来看看 AOP 是如何实现的
 
 我们都知道 AOP 是通过动态代理来实现的, 但是代理这一步是如何实现的呢? 其实就是之前提到过的, 在Spring Bean的创建过程中, 实现`BeanPostProcessor`的接口可以对创建好的Bean进行修改替换等操作
 
