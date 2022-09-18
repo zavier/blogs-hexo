@@ -8,6 +8,16 @@ tags: [java, diff]
 
 <!-- more -->
 
+首先需要引入如下包依赖
+
+```xml
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-lang3</artifactId>
+    <version>3.12.0</version>
+</dependency>
+```
+
 使用时需要实现`Diffable`接口，并使用`DiffBuilder`来构建比对结果
 
 ```java
