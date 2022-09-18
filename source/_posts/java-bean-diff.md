@@ -96,7 +96,7 @@ public class DiffUtils<T> {
             final BeanInfo beanInfo = Introspector.getBeanInfo(baseObj.getClass());
             final PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
             for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-                if (isExcludeField(propertyDescriptor.getName())) {
+                if (isExcludeField(propertyDescriptor.getName(), excludeFields)) {
                     continue;
                 }
 
