@@ -12,17 +12,18 @@ Hive为我们提供了`get_json_object`函数，可以指定路径来获取json�
 
 ```sql
 -- 处理对象
-hive> select get_json_object('{"name":"zhangsan", "age":10}', '$.name')
-zhangsan
+select get_json_object('{"name":"zhangsan", "age":10}', '$.name')
+-- 输出: zhangsan
 -- 如果需要获取对象中的多个数据，可以使用json_tuple
-hive> select json_tuple('{"name":"zhangsan", "age":10}', 'name', 'age')
-zhangsan   10
+select json_tuple('{"name":"zhangsan", "age":10}', 'name', 'age')
+-- 输出: zhangsan   10
+
 -- 处理数组
-hive> select get_json_object('["ab", "cd"]', '$.[0]')
-ab
+select get_json_object('["ab", "cd"]', '$.[0]')
+-- 输出: ab
 -- 处理对象数组
-hive> select get_json_object('[{"name":"zhangsan", "age":10},{"name":"lisi", "age":15}]', '$.[1].name')
-lisi
+select get_json_object('[{"name":"zhangsan", "age":10},{"name":"lisi", "age":15}]', '$.[1].name')
+-- 输出: lisi
 ```
 
 以上这种方式基本就能满足获取指定位置数据的需求了
@@ -34,49 +35,53 @@ lisi
 先创建对应的表结构，并插入数据
 
 ```sql
-hive> create table page_view (userid int, friends array<int>, properties map<string, string>);
-hive> insert into table page_view values 
-(1, array(1,2,3), map('a', 'b', 'c', 'd')), 
-(10, array(10,20,30), map('af', 'bf', 'cg', 'dg'));
-hive> select * from page_view;
+create table page_view (userid int, friends array<int>, properties map<string, string>);
+insert into table page_view values (1, array(1,2,3), map('a', 'b', 'c', 'd')),  (10, array(10,20,30), map('af', 'bf', 'cg', 'dg'));
+select * from page_view;
+/* 输出 *
 1   [1,2,3]      {"a":"b","c":"d"}
 10  [10,20,30]   {"af":"bf","cg":"dg"}
+*/
 ```
 
 这里我们用 explode 来处理一下 friends 和 properties列看一下
 
 ```sql
-hive> select explode(friends) as f from page_view;
+select explode(friends) as f from page_view;
+/** 输出 **
 1
 2
 3
 10
 20
 30
+*/
 
-hive> select explode(properties) as (m, n) from page_view;
+select explode(properties) as (m, n) from page_view;
+/** 输出 **
 a    b
 c    d
 af   bf
 cg   dg
+*/
 ```
 
 这个函数只能处理对应的map和array结构，我们可以通过split函数将字符串处理后，转换成array类型；通过str_to_map将字符串转换为map类型
 
 ```sql
-hive> select split('1,2,3,4', ',');
-["1", "2", "3", "4"]
-hive> select str_to_map('a:b,c:d');
-{"a":"b","c":"d"}
+select split('1,2,3,4', ',');
+-- 输出：["1", "2", "3", "4"]
+select str_to_map('a:b,c:d');
+-- 输出：{"a":"b","c":"d"}
 ```
 
 对于json格式的字符串与此函数支持的数据格式不同的地方，可以使用regexd_replace等字符串函数处理后使用
 
 ```sql
-hive> select replace(replace('[12,45,67]', '[', ''), ']', '');
-12,45,67
-hive> select substr('[12,45,67]', 2, length('[12,45,67]')-2);
-12,45,67
+select replace(replace('[12,45,67]', '[', ''), ']', '');
+-- 输出：12,45,67
+select substr('[12,45,67]', 2, length('[12,45,67]')-2);
+-- 输出：12,45,67
 
 ```
 
@@ -87,9 +92,11 @@ explode还有一个问题就是无法与表中的其他字段同时获取，即�
 格式：`lateral view explode(<map/array>) <tableAlias> as <col>`
 
 ```sql
-hive> select userid, m, n from page_view lateral view explode(properties) t as m, n where userid = 10;
+select userid, m, n from page_view lateral view explode(properties) t as m, n where userid = 10;
+/* 输出 *
 10    af    bf
 10    cg    dg
+*/
 ```
 
 
