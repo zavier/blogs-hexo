@@ -75,7 +75,7 @@ select str_to_map('a:b,c:d');
 -- 输出：{"a":"b","c":"d"}
 ```
 
-对于json格式的字符串与此函数支持的数据格式不同的地方，可以使用regexd_replace等字符串函数处理后使用
+对于json格式的字符串与此函数支持的数据格式不同的地方，可以使用regexp_replace等字符串函数处理后使用
 
 ```sql
 select replace(replace('[12,45,67]', '[', ''), ']', '');
