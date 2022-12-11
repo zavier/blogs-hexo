@@ -168,6 +168,7 @@ public class User {
 ![annotation-client-res](/images/annotation-client-res.jpg)
 
 
+项目Demo地址：https://github.com/zavier/annotation-processor
 
 
 
