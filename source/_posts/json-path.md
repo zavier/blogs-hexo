@@ -108,7 +108,7 @@ String newJson = JsonPath.parse(json).set("$['store']['book'][0]['author']", "Pa
 7. ScanPathToken，支持表达式：`..<name>`
 8. FunctionPathToken，用于支持内置的函数
 
-这样就可以将对应的表达式映射成一系列的token，然后依次解析，我们以获取属性使用的PropertyPathToken来看下解析过程
+这样就可以将对应的表达式映射成一系列的token，然后依次解析
 
 ```java
 // PathCompiler.java
@@ -140,7 +140,7 @@ private boolean readNextToken(PathTokenAppender appender) {
 }
 ```
 
-
+我们以获取属性使用的PropertyPathToken来看下解析过程
 
 ```java
 class PropertyPathToken extends PathToken {
