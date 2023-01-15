@@ -63,7 +63,7 @@ JSON目前是使用的比较多的一种数据格式，前后端的交互就是�
 5. 可以使用通配符`*`进行匹配，如：`$.store.book[*]` 或者 `$.store.bicycle.*`
 6. 深度查找可以使用`..<name>`来对属性进行查找，而不管它的具体位置，如：`$..price`
 7. 属性/数组过滤可以使用`[?(<expression>)]`，其中的表达式需要能解析为boolean值，如：`$.store.bicycle[?(@.color=='red')]` 或者 `$.store.book[?(@.price < 10)]`
-8. 函数使用：可以使用lengh()等函数，如：`$.store.book.length()` 
+8. 函数使用：可以使用lengh()等函数，如：`$.store.book.length()` 、`$.numbers.sum()`
 
 相关API用法如下：
 
@@ -74,7 +74,13 @@ final String author = compile.read(json);
 
 // 或者如果不重复使用的话，可以直接写成一步
 List<String> authors = JsonPath.read(json, "$.store.book[*].author");
+
+// 函数使用（需要注意函数能作用的数据类型，如 min(), max(), sum()等只能作用于数值数组）
+String json = "{\"numbers\":[1,3,4,7,-1]}";
+final Object read = JsonPath.read(json, "$.numbers.sum()"); // 输出：14.0
 ```
+
+
 
 以上主要是读取的操作，同时它还支持对数据进行修改，调用对应的set方法即可
 
@@ -105,6 +111,38 @@ String newJson = JsonPath.parse(json).set("$['store']['book'][0]['author']", "Pa
 这样就可以将对应的表达式映射成一系列的token，然后依次解析，我们以获取属性使用的PropertyPathToken来看下解析过程
 
 ```java
+// PathCompiler.java
+private boolean readNextToken(PathTokenAppender appender) {
+    char c = path.currentChar();
+    switch (c) {
+        case OPEN_SQUARE_BRACKET:
+            if (!readBracketPropertyToken(appender) && !readArrayToken(appender) && !readWildCardToken(appender)
+                && !readFilterToken(appender) && !readPlaceholderToken(appender)) {
+                fail("Could not parse token starting at position " + path.position() + ". Expected ?, ', 0-9, * ");
+            }
+            return true;
+        case PERIOD:
+            if (!readDotToken(appender)) {
+                fail("Could not parse token starting at position " + path.position());
+            }
+            return true;
+        case WILDCARD:
+            if (!readWildCardToken(appender)) {
+                fail("Could not parse token starting at position " + path.position());
+            }
+            return true;
+        default:
+            if (!readPropertyOrFunctionToken(appender)) {
+                fail("Could not parse token starting at position " + path.position());
+            }
+            return true;
+    }
+}
+```
+
+
+
+```java
 class PropertyPathToken extends PathToken {
     // 这里是解析JSONPath处理的属性名称
     private final List<String> properties;
@@ -114,7 +152,7 @@ class PropertyPathToken extends PathToken {
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         // 使用提供的json工具类判断json是否能转换成一个map
         if (!ctx.jsonProvider().isMap(model)) {
-			// 不能转成map则跳过或者抛出异常
+            // 不能转成map则跳过或者抛出异常
             // 为了看起来简洁一点，这里代码进行了删除，正常json对象解析都是map
         }
     
