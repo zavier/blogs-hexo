@@ -61,7 +61,6 @@ static class Goods {
     }
 }
 
-
 Goods goods = new Goods("goods1", new BigDecimal("100.54"), 5);
 Object result = Eval.me("goods", goods, "goods.totalPrice()");
 // result == 502.70
