@@ -51,6 +51,7 @@ select * from page_view;
 这里我们用 explode 来处理一下 friends 和 properties列看一下
 
 ```sql
+-- 处理list数据，转成单列多行
 select explode(friends) as f from page_view;
 /** 输出 **
 1
@@ -61,6 +62,7 @@ select explode(friends) as f from page_view;
 30
 */
 
+-- 处理map数据，转成两列(k-v)多行数据
 select explode(properties) as (m, n) from page_view;
 /** 输出 **
 a    b
@@ -73,8 +75,11 @@ cg   dg
 这个函数只能处理对应的map和array结构，我们可以通过split函数将字符串处理后，转换成array类型；通过str_to_map将字符串转换为map类型
 
 ```sql
+-- 使用split将字符串变成list结构
 select split('1,2,3,4', ',');
 -- 输出：["1", "2", "3", "4"]
+
+-- 使用str_to_map将字符串变成map结构
 select str_to_map('a:b,c:d');
 -- 输出：{"a":"b","c":"d"}
 ```
