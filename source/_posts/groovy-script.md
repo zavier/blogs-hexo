@@ -157,10 +157,9 @@ Object invoke = method.invoke(object, 6);
 // 对于没有参数的场景，甚至可以这样写（默认解析为Script类，会有run方法）
 GroovyClassLoader classLoader = new GroovyClassLoader();
 Class aClass = classLoader.parseClass("3 + 5");
-Object object = aClass.newInstance();
-Method method = object.getClass().getDeclaredMethod("run");
-Object invoke = method.invoke(object);
-// invoke == 8
+Script object = (Script) aClass.newInstance();
+Object result = object.run();
+// result == 8
 ```
 
 使用这种方式的时候，我们可以缓存创建的实例和对应的方法，之后就可以根据这两个信息进行方法的调用了，同时如果脚本类写的没有问题时，也不会有并发的问题
