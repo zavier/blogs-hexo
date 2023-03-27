@@ -8,6 +8,8 @@ tags: [hive, json]
 
 <!-- more -->
 
+## get_json_object
+
 Hive为我们提供了`get_json_object`函数，可以指定路径来获取json字符串中的属性值，如
 
 ```sql
@@ -28,7 +30,9 @@ select get_json_object('[{"name":"zhangsan", "age":10},{"name":"lisi", "age":15}
 
 以上这种方式基本就能满足获取指定位置数据的需求了
 
-但是在实际使用时，我们可能需要将json拆开解析成一张宽表，方便后面的分析使用，这时候我们需要遍历json字符串中的全部数据，然后与其他字段值做笛卡尔积，下面我们看下这种的实现方式
+## explode
+
+在实际使用时，我们可能需要将json拆开解析成一张宽表，方便后面的分析使用，这时候我们需要遍历json字符串中的全部数据，然后与其他字段值做笛卡尔积，下面我们看下这种的实现方式
 
 这里先介绍一下 explode这个函数，这个函数的作用是什么呢？它可以将array类型的数据转换成每个元素占用一行，对于map类型的数据可以将其每个键值对转换成一行（注意：这里说的array和map不是说的字符串类型的json数据，而是指hive自己的字段类型），我们执行看一下效果
 
@@ -85,6 +89,8 @@ select substr('[12,45,67]', 2, length('[12,45,67]')-2);
 
 ```
 
+## lateral view
+
 explode还有一个问题就是无法与表中的其他字段同时获取，即查询到的结果只能是explode涉及到的字段，如之前的page_view表，使用explode后就无法同时获取到userid字段的值
 
 这时候就需要 lateral view，它结合 explode结合使用，可以帮我们把数据进行组合
@@ -101,7 +107,17 @@ select userid, m, n from page_view lateral view explode(properties) t as m, n wh
 
 
 
+总结一下
 
+1. 简单的场景，可以直接通过get_json_object配置jsonPath来获取到对应的值
+
+2. 复杂的场景
+
+    先通过字符串处理函数将字符串数据转换成map或list
+
+    再使用explode将list/map转成多行数据
+
+    结合 lateral view 与 explode 将多行数据与其他字段进行组合，获取最终结果
 
 
 
