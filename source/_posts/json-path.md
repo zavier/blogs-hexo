@@ -96,7 +96,7 @@ final Object read = JsonPath.read(json, "$.numbers.sum()"); // 输出：14.0
 
 **DEFAULT_PATH_LEAF_TO_NULL** 
 
-叶子节点找不到时默认为null： 正常情况下通过Path找不到数据值，JsonPath会抛出异常（使用了[*]除外，这种找不到路径是会返回空集合），增加此配置后在叶子结点找不到数据时会返回null 而不是异常（仅限叶子结点，中间节点不存在时仍然会抛出异常）
+叶子节点找不到时默认为null： 正常情况下通过Path找不到数据值，JsonPath会抛出异常（使用了通配符如[*]等除外，这种找不到路径是会返回空集合），增加此配置后在叶子结点找不到数据时会返回null 而不是异常（仅限叶子结点，中间节点不存在时仍然会抛出异常）
 
 ```java
 Configuration configuration =    Configuration.builder().options(Option.DEFAULT_PATH_LEAF_TO_NULL).build();
