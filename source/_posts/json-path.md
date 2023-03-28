@@ -80,6 +80,60 @@ String json = "{\"numbers\":[1,3,4,7,-1]}";
 final Object read = JsonPath.read(json, "$.numbers.sum()"); // 输出：14.0
 ```
 
+除此之外，JsonPath还提供了一些额外的配置项，以仓库中的json为例子
+
+```json
+[
+   {
+      "name" : "john",
+      "gender" : "male"
+   },
+   {
+      "name" : "ben"
+   }
+]
+```
+
+**DEFAULT_PATH_LEAF_TO_NULL** 
+
+叶子节点找不到时默认为null： 正常情况下通过Path找不到数据值，JsonPath会抛出异常（使用了[*]除外，这种找不到路径是会返回空集合），增加此配置后在叶子结点找不到数据时会返回null 而不是异常（仅限叶子结点，中间节点不存在时仍然会抛出异常）
+
+```java
+Configuration configuration =    Configuration.builder().options(Option.DEFAULT_PATH_LEAF_TO_NULL).build();
+Object data = JsonPath.using(configuration).parse(json).read("$[1]['gender']");
+// data == null
+```
+
+**ALWAYS_RETURN_LIST**
+
+不管JsonPath获取的结果是单个值还是集合，都会包装成集合返回
+
+```java
+Configuration configuration = Configuration.builder().options(Option.DEFAULT_PATH_LEAF_TO_NULL, Option.ALWAYS_RETURN_LIST).build();
+Object data = JsonPath.using(configuration).parse(json).read("$[*]['gender']");
+// data == ["male",null]
+```
+
+**SUPPRESS_EXCEPTIONS**
+
+当处理发生异常时，如果配置了 ALWAYS_RETURN_LIST，则返回空集合，否则返回null
+
+```java
+Configuration configuration = Configuration.builder().options(Option.ALWAYS_RETURN_LIST, Option.SUPPRESS_EXCEPTIONS).build();
+Object data = JsonPath.using(configuration).parse(json).read("$[0]['abc']['def']");
+// data = []
+```
+
+**REQUIRE_PROPERTIES**
+
+路径中属性不存在时，会抛出异常，因为本身路径不存在就会抛出异常，所以这个配置主要体现在配置通配符的场景下，且如果同时配置了 SUPPRESS_EXCEPTIONS， 则 SUPPRESS_EXCEPTIONS 优先（不会抛出异常）
+
+```java
+Configuration configuration = Configuration.builder().options(Option.ALWAYS_RETURN_LIST).build();
+Object data = JsonPath.using(configuration).parse(json).read("$[*]['gender']");
+// 抛出异常
+```
+
 
 
 以上主要是读取的操作，同时它还支持对数据进行修改，调用对应的set方法即可
