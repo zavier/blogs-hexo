@@ -1,5 +1,5 @@
 ---
-title: Guava EventBus笔记
+title: Guava EventBus
 date: 2020-10-01 21:35:12
 tags: [java, guava]
 ---
