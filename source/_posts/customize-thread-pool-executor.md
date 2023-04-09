@@ -1,7 +1,7 @@
 ---
 title: 自定义扩展线程池
 date: 2019-10-27 01:14:42
-tags: java
+tags: [java, 线程池]
 ---
 
 ## 线程池的基本使用
@@ -56,7 +56,7 @@ threadPoolExecutor.executor(() -> System.out.println("execute"));
 
 ```java
 getCorePoolSize()               // 获取设置的核心线程数
-getKeepAliveTime(TimeUnit unit) // 获取设置的非核心线程空间存活时间
+getKeepAliveTime(TimeUnit unit) // 获取设置的非核心线程存活时间
 getMaximumPoolSize()            // 获取设置的最大线程数
 getPoolSize()                   // 获取当前任务队列中的任务数量
 getLargestPoolSize()            // 获取曾经达到的最大线程数
@@ -69,6 +69,27 @@ getQueue().remainingCapacity()  // 获取任务队列的当前剩余空间
 ```
 
 可以通过这些方法来对线程池的运行状态进行监控
+
+
+
+## 线程池参数动态调整
+
+线程池参数的设置比较复杂，在初始时很难准确的配置，所以可以在初始配置后根据具体的运行情况进行动态更新
+
+ThreadPoolExecutor 也提供了相关的方法可以对初始化设置的参数进行变更
+
+```java
+// 设置核心线程数量
+setCorePoolSize(int corePoolSize);
+// 设置最大线程数量
+setMaximumPoolSize(int maximumPoolSize);
+// 设置线程存活时间
+setKeepAliveTime(long time, TimeUnit unit);
+// 设置拒绝策略
+setRejectedExecutionHandler(RejectedExecutionHandler handler);
+// 设置线程池工厂
+setThreadFactory(ThreadFactory threadFactory);
+```
 
 
 
@@ -122,3 +143,9 @@ public class TimingThreadPool extends ThreadPoolExecutor {
 ```
 
 如果使用Spring 提供的 ThreadPoolTaskExecutor，其也提供了 TaskDecorator 可以对任务进行装饰修改
+
+
+
+## 思考
+
+一般公司内部会提供线程池监控、动态调整线程池参数等组件，但是是否可以有类似自动动态调整的工具，可以根据预先配置的如队列最大等待时间等，结合统计的信息，来自动调整线程池的参数，而不需要人工的参与呢？
