@@ -173,3 +173,4 @@ public V call(Callable<V> callable) throws ExecutionException, RetryException {
 └───── RandomWaitStrategy            // 指定一个时间范围，每次在其中进行随机取值【类】
 ```
 
+其中提供了很多可以直接使用的策略类，当不满足我们需求的时候，也可以自己实现对应的接口来扩展
