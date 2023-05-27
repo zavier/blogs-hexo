@@ -1,5 +1,5 @@
 ---
-title: Java项目中使用Groovy脚本的几种方式
+title: Java项目中使用Groovy的几种方式
 date: 2023-03-25 17:23:17
 tags: [java, groovy]
 ---
