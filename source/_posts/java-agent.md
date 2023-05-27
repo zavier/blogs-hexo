@@ -329,6 +329,19 @@ public class DemoService {
 
 2. 在新建一个agent项目，实现记录所有调用DemoService#sayHello方法的参数和返回值
 
+这次我们借助bytebuddy的支持来实现我们的功能
+
+```xml
+<!-- 引入 byte-buddy依赖 -->
+<dependency>
+    <groupId>net.bytebuddy</groupId>
+    <artifactId>byte-buddy</artifactId>
+    <version>1.12.12</version>
+</dependency>
+```
+
+
+
 ```java
 // 先创建一个记录日志的Advice
 import net.bytebuddy.asm.Advice;
