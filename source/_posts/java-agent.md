@@ -295,6 +295,19 @@ public class Agent {
 }
 ```
 
+如果想要使用premain方法，需要在对应项目jvm启动时即指定jar包：
+
+ `java -javaagent:xxx/agent.jar -jar server.jar`
+
+要使用agentmain方法，则需要通过java代码来实现动态的挂载
+
+```java
+VirtualMachine jvm = VirtualMachine.attach("<要挂载agent到哪个jvm进程的ID>");
+jvm.loadAgent("/path/agent.java"); // agent jar包的路径
+```
+
+
+
 #### 实现例子
 
 这次我们用byte-buddy对java-agent的支持，来实现一个记录请求日志的功能
