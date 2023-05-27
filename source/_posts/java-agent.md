@@ -278,7 +278,7 @@ Can-Retransform-Classes: true
 Premain-Class: com.zavier.agent.Agent
 ```
 
-这里我们使用maven的assembly插件来完成上述配置实现
+这里我们使用maven的assembly插件来完成上述配置实现，这样在打包时maven自动帮我们完成了全部配置功能
 
 ```xml
 <plugin>
