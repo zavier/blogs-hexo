@@ -13,7 +13,7 @@ tags: [java, agent]
 比如说常见的创建线程，linux和window系统提供的接口就不一样
 
 ```c
-// 不同操作系统下，使用c语言创建线程
+// 不同操作系统下，使用c语言创建线程的API
 // linux
 int pthread_create(pthread_t *thread, const pthread_attr_t *attr,     
                    void *(*start_routine) (void*), void *arg);
@@ -414,7 +414,7 @@ public static void main(String[] args) throws Exception {
 }
 ```
 
-这时候再通过浏览器访问`http://localhost:8080/sayHello?name=zhangsan`就可以看到如下输出
+这时候再通过浏览器访问`http://localhost:8080/sayHello?name=zhangsan`就可以在springboot项目中看到如下输出
 
 ```
 method:sayHello,param:{arg0=zhangsan},result:User(name=zhangsan)
