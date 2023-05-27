@@ -214,7 +214,3 @@ public static ClassLoader getDefaultClassLoader() {
 
 
 如果有错误的地方，或者大家有更好的方案，欢迎提出指正，谢谢
-
-
-
-参考资料： [理解TCCL：线程上下文类加载器](https://benjaminwhx.com/2018/07/11/%E7%90%86%E8%A7%A3TCCL%EF%BC%9A%E7%BA%BF%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/)
