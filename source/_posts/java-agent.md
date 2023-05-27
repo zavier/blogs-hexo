@@ -31,11 +31,11 @@ HANDLE CreateThread(
 
 除了创建线程，其实还有很多的差异，比如说如果用C语言来实现既能在windows下运行，又能在linux下指定的代码，那么就需要针对有差异的地方，根据不同的操作系统来编写不同的代码，然后在编译的时候根据需要编译成对应系统下的二进制指令，这无疑是很痛苦和低效的方式
 
-而Java下的实现方式是不执行生成最终平台的二进制文件，而是针对不同平台提供对应的不同下的虚拟机，由虚拟机来负责程序的执行，这样自然的操作系统的差异就需要由虚拟机来屏蔽
+而Java下编译并不会生成目标平台的二进制文件，而是生成一个与平台无关的字节码文件，由不同平台下Java虚拟机负责加载执行，操作系统的差异就需要由虚拟机来进行屏蔽，对开发人员是无感知的
+
+我们只需要将源代码编译成字节码（而不是操作系统下的二进制格式），剩下的就可以交给虚拟机来识别执行了
 
 <img src="/images/jvm-class.png" style="zoom:60%" />
-
-但是既然是虚拟机，那也必然会有对应的执行指令，这个指令就是字节码，我们只需要将源代码编译成字节码（而不是操作系统下的二进制格式），那么虚拟机就能识别进行执行了
 
 其实这样还有一个额外的好处，那就是在Java虚拟机上，不仅仅只能支持Java语言，理论上只要是符合规范的字节码文件，它都能执行，至于这个字节码文件是Java语言编译过来的，还是其他语言（如kotlin, groovy）编译过来的并不重要，甚至我们都可以手写字节码来执行～
 
@@ -60,7 +60,7 @@ public class Test {
 }
 ```
 
-那么对应的字节码如何查看呢，就是看它编译后的文件以.class结尾的文件`Test.class`，这个文件怎么查看呢，一种就是直接以二进制的方式打开，当然，这个根据是无法进行阅读的，我贴出来一部分感受一下
+那么对应的字节码如何查看呢，就是看它编译后的文件以.class结尾的文件`Test.class`，而这个文件怎么查看呢，一种就是直接以二进制的方式打开，当然，这个人根本是无法阅读的，我贴出来一部分大家感受一下
 
 ```shell
 ➜  hexdump -C Test.class
@@ -75,7 +75,7 @@ public class Test {
 00000080  74 2f 54 65 73 74 3b 01  00 04 6d 61 69 6e 01 00  |t/Test;...main..|
 ```
 
-幸运的是JDK提供了一个反编译字节码的工具 javap，具体内容比较多，这里我贴一下 incr 方法对应的字节码大家看一下
+还有一种方式就是使用 JDK提供的反编译字节码的工具 javap，我们来执行一下看看，由于反编译后的内容比较多，这里我贴一下 incr 方法对应的字节码大家看一下
 
 ```shell
 ➜  javap -v Test         
@@ -104,13 +104,14 @@ SourceFile: "Test.java"
 
 以上方法的字节码还是比较好理解的，这时候想一下，如果我们将 `iconst_1`改成`iconst_2`，那么在运行这个文件，是不是就会变成了加二的操作呢？我们可以来试一下
 
-字节码文件是有它自己的规范的，我们随便改可能会导致加载异常，而且手动找到对应命令进行修改也确实是一个很麻烦的事情，这时候就需要使用一个工具类来完成了，可选的有很多，比如asm, cglib, javassist, bytebuddy等
+字节码文件是有它自己的规范的，我们随便改可能会导致加载异常，而且手动找到对应命令进行修改也确实是一个很麻烦的事情，这时候就需要使用工具来完成了，可选的有很多，如asm, cglib, javassist, bytebuddy等等
 
-这里使用asm9来实现一下功能
+这里使用asm9来实现一下
 
 ```java
 public class Transformer {
 
+    // 遍历查找类的
     static class MyClassVisitor extends ClassVisitor {
         public MyClassVisitor(int i, ClassWriter cw) {
             super(i, cw);
@@ -128,6 +129,7 @@ public class Transformer {
         }
     }
 
+    // 遍历查找方法的
     static class MyMethodVisitor extends MethodVisitor {
         public MyMethodVisitor(int api, MethodVisitor methodVisitor) {
             super(api, methodVisitor);
@@ -136,7 +138,7 @@ public class Transformer {
         @Override
         public void visitInsn(int opcode) {
             if (opcode == Opcodes.ICONST_1) {
-                // 如果指定是ICONST_1，则改为 ICONST_2
+                // 如果指定是ICONST_1，则修改为 ICONST_2
                 super.visitInsn(Opcodes.ICONST_2);
             } else {
                 super.visitInsn(opcode);
@@ -145,8 +147,9 @@ public class Transformer {
 
     }
     
-    
+    // 使用main方法来执行修改
     public static void main(String[] args) throws IOException {
+        // 读取字节码文件，进行转换
         ClassReader cr = new ClassReader(new FileInputStream("/path/Test.class"));
         ClassWriter cw = new ClassWriter(cr, 0);
         ClassVisitor cv = new MyClassVisitor(Opcodes.ASM9, cw);
@@ -154,6 +157,7 @@ public class Transformer {
 
         byte[] bytes = cw.toByteArray();  // 修改后的字节码
 
+        // 将转换后的结果输出到文件中
         final FileOutputStream fileOutputStream = new FileOutputStream("/path/Test.class");
         fileOutputStream.write(bytes);
         fileOutputStream.close();
@@ -181,7 +185,7 @@ public int incr(int);
           0       4     1     i   I
 ```
 
-这时候我们再运行一下代码
+我们再运行一下代码看一看
 
 ```shell
 ➜ java com.zavier.agent.Test
@@ -189,17 +193,28 @@ public int incr(int);
 7
 ```
 
-到这里字节码部分就介绍完了，大家主要记住 字节码是JVM运行的关键就可以了，我们甚至可以通过修改字节码实现源代码中没有的功能
+到这里字节码部分就介绍完了，大家主要记住 字节码是JVM运行的关键就可以了，其中基本包含了我们在源代码中编写的全部内容，我们通过修改字节码甚至可以实现源代码中没有的功能
 
 ### JavaAgent
 
-现在我们开始介绍一下java-agent技术，那么java-agent是做什么的呢？简单理解就是jvm提供的可以在运行时修改字节码的力，利用这种能力可以用来记录请求链路（如skywalking等）或者录制流量等
+现在我们开始介绍一下java-agent技术，那么java-agent是做什么的呢？简单理解就是jvm提供的可以在运行时修改字节码的能力，利用这种能力可以做很多事情，如用来记录请求链路（skywalking等）或者录制流量等
 
 #### 方法声明
 
-javaagent使用有两种方式，一种是在jvm启动的时候直接指定agent, 还有一种是在运行时动态挂载agent
+javaagent使用有两种方式，一种是在jvm启动的时候直接指定agent，即需要在对应项目jvm启动时即指定jar包：
 
-先看一下启动时指定的写法，它需要声明实现如下的方法
+ `java -javaagent:xxx/agent.jar -jar server.jar`
+
+还有一种是在运行时动态挂载agent，这种需要通过java代码来实现动态的挂载
+
+```java
+VirtualMachine jvm = VirtualMachine.attach("<要挂载agent到哪个jvm进程的ID>");
+jvm.loadAgent("/path/agent.java"); // agent jar包的路径
+```
+
+
+
+先看一下启动时指定代理包的写法，它需要声明实现如下的方法
 
 ```java
 public static void premain(String args, Instrumentation instrumentation)
@@ -211,9 +226,42 @@ public static void premain(String args, Instrumentation instrumentation)
 public static void agentmain(String agentArgs, Instrumentation inst)
 ```
 
+#### 方法实现
+
+两种方式使用起来大同小异，我们看一下大致用法实现
+
+```java
+public class Agent {
+
+    // 定义 premain 方法并实现
+    public static void premain(String args, Instrumentation instrumentation) {
+        // 调用 Instrumentation#addTransformer(java.lang.instrument.ClassFileTransformer)
+        // 添加对应的字节码文件转换器，用来对字节码进行转换
+        instrumentation.addTransformer(new LogClassFileTransformer());
+    }
+
+    // 定义 agentmain 方法并实现
+    public static void agentmain(String agentArgs, Instrumentation instrumentation) {
+        // 同 premain 方法实现
+        instrumentation.addTransformer(new LogClassFileTransformer());
+    }
+
+    // 自定义的字节码文件转换器
+    static class LogClassFileTransformer implements ClassFileTransformer {
+
+        @Override
+        public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+            // 字节码转换的实现逻辑，通过解析原始字节码，进行替换后返回更新后的字节码，达到修改实现的目的
+        }
+    }
+}
+```
+
+
+
 #### 打包配置
 
-同时，不管使用哪种方式，都需要增加一下如下打包的配置
+不管使用哪种方式，都需要增加一下如下打包的配置
 
 1. 打包时需要将依赖一起打包
 2. 打的包中的 META-INF目录下的MANIFEST.MF文件中增加如下配置：
@@ -263,47 +311,6 @@ Premain-Class: com.zavier.agent.Agent
         </execution>
     </executions>
 </plugin>
-```
-
-#### 方法实现
-
-两种方式使用起来大同小异，我们看一下大致用法实现
-
-```java
-public class Agent {
-
-    // 定义 premain 方法并实现
-    public static void premain(String args, Instrumentation instrumentation) {
-        // 调用 Instrumentation#addTransformer(java.lang.instrument.ClassFileTransformer)
-        // 添加对应的字节码文件转换器，用来对字节码进行转换
-        instrumentation.addTransformer(new LogClassFileTransformer());
-    }
-
-    // 定义 agentmain 方法并实现
-    public static void agentmain(String agentArgs, Instrumentation instrumentation) {
-        // 同 premain 方法实现
-        instrumentation.addTransformer(new LogClassFileTransformer());
-    }
-
-    static class LogClassFileTransformer implements ClassFileTransformer {
-
-        @Override
-        public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-            // 字节码转换的实现逻辑，通过解析原始字节码，进行替换后返回更新后的字节码，达到修改实现的目的
-        }
-    }
-}
-```
-
-如果想要使用premain方法，需要在对应项目jvm启动时即指定jar包：
-
- `java -javaagent:xxx/agent.jar -jar server.jar`
-
-要使用agentmain方法，则需要通过java代码来实现动态的挂载
-
-```java
-VirtualMachine jvm = VirtualMachine.attach("<要挂载agent到哪个jvm进程的ID>");
-jvm.loadAgent("/path/agent.java"); // agent jar包的路径
 ```
 
 
