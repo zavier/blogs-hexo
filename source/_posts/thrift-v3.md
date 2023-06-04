@@ -10,6 +10,8 @@ Thrift的关键其实就是在定义好结构后，通过某种序列化方式�
 
 <!-- more -->
 
+<img src="/images/thrift_struct.jpg" style="zoom:60%" />
+
 之前我们也看过thrift支持的一些结构类型，如struct、string、map、list等，具体可以看下对应枚举
 
 ```java
