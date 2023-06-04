@@ -199,6 +199,8 @@ public int incr(int);
 
 现在我们开始介绍一下java-agent技术，那么java-agent是做什么的呢？简单理解就是jvm提供的可以在运行时修改字节码的能力，利用这种能力可以做很多事情，如用来记录请求链路（skywalking等）或者录制流量等
 
+<img src="/images/jvm-class.png" style="zoom:60%" />
+
 #### 方法声明
 
 javaagent使用有两种方式，一种是在jvm启动的时候直接指定agent，即需要在对应项目jvm启动时即指定jar包：
