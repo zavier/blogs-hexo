@@ -1,5 +1,5 @@
 ---
-title: 让GPT开发Work模版功能
+title: 让GPT开发Word模版功能
 date: 2023-06-10 20:02:06
 tags: [word, template, gpt]
 ---
