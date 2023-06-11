@@ -12,11 +12,40 @@ tags: [word, template, gpt]
 2. 数字类型的小数截取功能，要支持位数不足时是否需要补0
 3. 需要支持日期的格式化
 4. 需要支持图片占位符的替换
-5. 需要支持使用对象集合，渲染word中表格多行的数据部分
+5. 需要支持使用对象集合，渲染word中表格多行的数据部分(暂未实现)
+
+### 运行效果
+
+先来看一下最终呈现的效果
+
+word模版内容
+
+<img src="/images/word-template/template.jpg" style="zoom:60%" />
+
+模版使用数据
+
+```java
+Map<String, Object> placeholderMap = new HashMap<>();
+placeholderMap.put("name", "张三");
+placeholderMap.put("profession", "里斯");
+placeholderMap.put("ssname", "John Doe");
+placeholderMap.put("price", String.valueOf(123.45));
+placeholderMap.put("date", new Date());
+placeholderMap.put("image1", "https://zhengw-tech.com/images/netty-server.png");
+placeholderMap.put("image2", "https://zhengw-tech.com/images/jvm-class.png");
+```
+
+最终word内容
+
+<img src="/images/word-template/output.jpg" style="zoom:60%" />
+
+
 
 <!-- more -->
 
-下面开始对话
+
+
+下面我面来看一下这个对话过程
 
 开始的时候准备让gpt直接一次实现全部的功能，但是发现在功能比较多的时候，它很容易遗忘前面的功能，导致反复修改，后来改为让它来分析需求，确定步骤之后，一步一步分模块和它沟通让它来实现
 
@@ -736,31 +765,6 @@ public class WordTemplateExample {
 #### 表格占位符替换
 
 这个试了下，实现的一直有问题，后续有时间再看吧～～
-
-
-
-### 运行效果
-
-模版内容
-
-<img src="/images/word-template/template.jpg" style="zoom:60%" />
-
-模版使用数据
-
-```java
-Map<String, Object> placeholderMap = new HashMap<>();
-placeholderMap.put("name", "张三");
-placeholderMap.put("profession", "里斯");
-placeholderMap.put("ssname", "John Doe");
-placeholderMap.put("price", String.valueOf(123.45));
-placeholderMap.put("date", new Date());
-placeholderMap.put("image1", "https://zhengw-tech.com/images/netty-server.png");
-placeholderMap.put("image2", "https://zhengw-tech.com/images/jvm-class.png");
-```
-
-结果输出
-
-<img src="/images/word-template/output.jpg" style="zoom:60%" />
 
 
 
