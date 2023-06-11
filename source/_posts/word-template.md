@@ -739,6 +739,31 @@ public class WordTemplateExample {
 
 
 
+### 运行效果
+
+模版内容
+
+<img src="/images/word-template/template.jpg" style="zoom:60%" />
+
+模版使用数据
+
+```java
+Map<String, Object> placeholderMap = new HashMap<>();
+placeholderMap.put("name", "张三");
+placeholderMap.put("profession", "里斯");
+placeholderMap.put("ssname", "John Doe");
+placeholderMap.put("price", String.valueOf(123.45));
+placeholderMap.put("date", new Date());
+placeholderMap.put("image1", "https://zhengw-tech.com/images/netty-server.png");
+placeholderMap.put("image2", "https://zhengw-tech.com/images/jvm-class.png");
+```
+
+结果输出
+
+<img src="/images/word-template/output.jpg" style="zoom:60%" />
+
+
+
 ### 总结
 
 整体使用下来感受总结一下
