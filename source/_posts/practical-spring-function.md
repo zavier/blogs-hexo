@@ -1,7 +1,7 @@
 ---
 title: Spring 事件及异步方法使用
 date: 2019-11-30 12:06:10
-tags: [java, spring]
+tags: [java, spring, eventbus]
 ---
 
 Spring 不仅为我们提供了`IOC` , `AOP`功能外，还在这个基础上提供了许多的功能，我们用的最多的可能就是` Spring MVC`了吧，但是让我们来看下`spring-context`包，其中包含了缓存、调度、校验功能等等

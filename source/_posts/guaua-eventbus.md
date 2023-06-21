@@ -1,7 +1,7 @@
 ---
 title: Guava EventBus
 date: 2020-10-01 21:35:12
-tags: [java, guava]
+tags: [java, guava, eventbus]
 ---
 
 在我们日常开发中经常有这种类型的场景：
