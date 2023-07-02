@@ -147,20 +147,20 @@ JSONata内置支持了许多函数，同时也支持自定义的函数，如使�
 
 #### 字符串函数
 
-| $string         | $length             | $substring | $substringBefore    |
+| \$string         | \$length             | \$substring | \$substringBefore    |
 | --------------- | ------------------- | ---------- | ------------------- |
-| $substringAfter | $uppercase          | $lowercase | $trim               |
-| $pad            | $contains           | $split     | $join               |
-| $match          | $replace            | $eval      | $base64encode       |
-| $base64decode   | $encodeUrlComponent | $encodeUrl | $decodeUrlComponent |
-| $decodeUrl      |                     |            |                     |
+| \$substringAfter | \$uppercase          | \$lowercase | \$trim               |
+| \$pad            | \$contains           | \$split     | \$join               |
+| \$match          | \$replace            | \$eval      | \$base64encode       |
+| \$base64decode   | \$encodeUrlComponent | \$encodeUrl | \$decodeUrlComponent |
+| \$decodeUrl      |                     |            |                     |
 
 #### 数值函数
 
-| \$number      | $floor      | $abs           | $ceil         |
+| \$number      | \$floor      | \$abs           | \$ceil         |
 | ------------- | ----------- | -------------- | ------------- |
-| \$round       | $power      | $sqrt          | $random       |
-| $formatNumber | $formatBase | $formatInteger | $parseInteger |
+| \$round       | \$power      | \$sqrt          | \$random       |
+| \$formatNumber | \$formatBase | \$formatInteger | \$parseInteger |
 
 #### 聚合函数
 
@@ -169,30 +169,33 @@ JSONata内置支持了许多函数，同时也支持自定义的函数，如使�
 
 #### 布尔函数
 
-| $boolean | $not | $exists |      |
+| \$boolean | \$not | \$exists |      |
 | -------- | ---- | ------- | ---- |
 
 #### 数组函数
 
-| $count   | $append   | $sort | $reverse |
+| \$count   | \$append   | \$sort | \$reverse |
 | -------- | --------- | ----- | -------- |
-| $shuffle | $distinct | $zip  |          |
+| \$shuffle | \$distinct | \$zip  |          |
 
 #### 对象函数
 
-| $keys | $lookup | $spread | $merge  |
+| \$keys | \$lookup | \$spread | \$merge  |
 | ----- | ------- | ------- | ------- |
-| $sift | $each   | $error  | $assert |
-| $type |         |         |         |
+| \$sift | \$each   | \$error  | \$assert |
+| \$type |         |         |         |
 
 #### 时间函数
 
-| $now | $millis | $fromMillis | $toMillis |
+| \$now | \$millis | \$fromMillis | \$toMillis |
 | ---- | ------- | ----------- | --------- |
 
 #### 高阶函数
 
-| $map  | $filter | $single | $reduce |
+| \$map  | \$filter | \$single | \$reduce |
 | ----- | ------- | ------- | ------- |
-| $sift |         |         |         |
+| \$sift |         |         |         |
 
+
+
+在Java项目中使用的话，可以使用[JSONata4Java](https://github.com/IBM/JSONata4Java)
