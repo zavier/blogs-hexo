@@ -1,15 +1,15 @@
 ---
-title: 优雅的遍历表中数据
+title: 如何优雅的遍历表中数据
 tags:
   - java
 date: 2023-08-30 00:04:32
 ---
 
 
-日常工作中，有一些功能如状态更新等需要遍历表中的全部(几乎)数据，如果数据量比较少的情况下，我们可以正常的使用数据库如mysql提供的limit和offset来实现分页的功能，但是如果数据量比较大，这时候就会产生深分页的问题，导致产生慢SQL, 这时候的一种实现方式就是通过主键ID+查询条件来过滤数据，使用类似如下语句
+日常工作中，有一些功能如状态更新等需要遍历表中数据，如果数据量比较少的情况下，我们可以正常的使用数据库如mysql提供的limit和offset来实现分页的功能，但是如果数据量比较大，这时候就会有深分页的问题，产生慢SQL, 为了解决这个问题，一种实现方式就是通过主键ID+查询条件来过滤数据，使用类似如下语句
 
 ```sql
-SELECT * FROM task WHERE id > $minId AND status = 1 ORDER BY id
+SELECT * FROM task WHERE id > $minId AND status = 1 ORDER BY id LIMIT 200
 ```
 
 之后每次使用查询的最大值更新变量minId，直到查询不出数据为止，具体对应到Java代码中大致如下：
@@ -55,7 +55,7 @@ public class TaskStatusUpdater {
 
 ```java
 // 将消费逻辑包装成Consumer传递进来
-public void execute(Consumer<Task> taskConsumer) {
+public void consumeAllData(Consumer<Task> taskConsumer) {
     int limit = 200;
     int minId = 0;
 
@@ -76,6 +76,16 @@ public void execute(Consumer<Task> taskConsumer) {
         }
     }
 }
+
+// 使用代码如下
+consumeAllData(task -> {
+    // 逻辑处理1
+});
+
+consumeAllData(task -> {
+    // 逻辑处理2
+});
+
 ```
 
 ### Iterable
@@ -170,4 +180,4 @@ public class TaskService {
 
 这里可以看到，使用起来非常的简单，直接通过spring注入后，使用foreach语法直接进行遍历即可，不需要关注具体的数据量，而且不同的业务逻辑也可以直接使用
 
-以上就是实现的大致思路，如果大家有更好的方案，欢迎指教～
+以上就是实现的大致思路，如果大家有更好的方案，欢迎沟通交流～
