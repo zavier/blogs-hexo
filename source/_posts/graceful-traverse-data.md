@@ -49,7 +49,7 @@ public class TaskStatusUpdater {
 
 <!-- more -->
 
-### 使用Consumer
+### Consumer
 
 首先想到的就是使用java8提供的函数接口-Consumer, 这时候我们可以将代码修改如下，将处理逻辑作为参数传递进方法，这样不同的处理逻辑，都可以复用这个方法
 
@@ -88,7 +88,7 @@ consumeAllData(task -> {
 
 ```
 
-### Iterable
+### Iterator/Iterable
 
 那么除了使用Consumer这个函数接口，是否还有其他的方式呢？那就是使用Iterable接口，这里我们将代码修改如下
 
@@ -180,4 +180,20 @@ public class TaskService {
 
 这里可以看到，使用起来非常的简单，直接通过spring注入后，使用foreach语法直接进行遍历即可，不需要关注具体的数据量，而且不同的业务逻辑也可以直接使用
 
-以上就是实现的大致思路，如果大家有更好的方案，欢迎沟通交流～
+### Stream
+
+如果喜欢Stream，也可以将上面的Iterator换成Stream的方式
+
+```java
+// 将Iterator 转换成 Stream进行处理使用
+public Stream<Task> taskStream() {
+    final Iterator<Task> iterator = taskIterable.iterator();
+    return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
+            iterator,
+            Spliterator.ORDERED | Spliterator.IMMUTABLE), false);
+}
+```
+
+
+
+以上就是实现的大致思路，抛砖引玉～
