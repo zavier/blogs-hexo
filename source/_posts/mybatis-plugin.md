@@ -258,3 +258,5 @@ public void test() {
 
 
 
+对应仓库的源代码位置：https://github.com/zavier/mybatis-plugin-example
+
