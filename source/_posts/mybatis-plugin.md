@@ -1,5 +1,5 @@
 ---
-title: MyBatis插件开发使用
+title: MyBatis插件开发实例
 date: 2022-12-24 10:25:13
 tags: [mybatis, sql]
 ---
