@@ -1,5 +1,5 @@
 ---
-title: 如何用非代理的方式实现java拦截器实现
+title: 如何用非代理的方式实现java拦截器
 date: 2023-09-10 12:22:30
 tags: [java, 拦截器, interceptor]
 ---
