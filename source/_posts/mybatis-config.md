@@ -1,5 +1,5 @@
 ---
-title: MyBatis使用原理及配置简化实现
+title: MyBatis(二)原理及简化工具介绍
 date: 2022-06-23 10:06:24
 tags: [java, mybatis]
 ---
@@ -549,7 +549,7 @@ public T getObject() throws Exception {
 
 ## MyBatis-Plus
 
-大部分情况下，mapper.xml的文件中的一些基本查询都是必须的，每次手动写xml费事费力，这时候可以使用MyBatis-Generator来生成，但是如果我们想把这一步骤也省略的话，就可以直接使用[MyBatis-Plus](https://www.mybatis-plus.com/)
+大部分情况下，mapper.xml的文件中的一些基本查询都是必须的，每次手动写xml费事费力，这时候可以使用MyBatis-Generator来生成，但是如果我们想把这一步骤也省略的话，就可以直接使用[MyBatis-Plus](https://baomidou.com/)
 
 ### 配置使用
 

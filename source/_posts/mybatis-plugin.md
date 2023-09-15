@@ -1,5 +1,5 @@
 ---
-title: MyBatis插件开发实例
+title: MyBatis(三)插件开发
 date: 2022-12-24 10:25:13
 tags: [mybatis, sql]
 ---
@@ -142,7 +142,7 @@ INSERT INTO `employees` (`emp_no`,`birth_date`,`first_name`,`last_name`,`gender`
 
 这里我们以一个最简单的分页插件功能为例，看一下如何实现使用一个插件
 
-一般分页我们可以拦截Executor相关的方法，但是这里为了简单，我们就处理StatementHandler#prepare方法，在进行预编译sql前，将sql进行修改，这样执行的就是分页后的sql了
+一般分页我们可以拦截Executor的query相关的各个重载方法，但是这里为了简单，我们就处理StatementHandler#prepare方法，在进行预编译sql前，将sql进行修改，这样执行的就是分页后的sql了
 
 ```java
 // 需要添加拦截器注解

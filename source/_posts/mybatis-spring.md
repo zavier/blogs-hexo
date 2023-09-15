@@ -1,5 +1,5 @@
 ---
-title: MyBatis-Spring配置及使用
+title: MyBatis(一)配置详解
 date: 2019-03-31 18:22:50
 tags: [java, mybatis, spring]
 ---
