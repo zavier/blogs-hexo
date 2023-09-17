@@ -51,7 +51,7 @@ public interface AddCustomerValidatorExtPt extends ExtensionPointI {
 这里先看下这个注解的参数，这里使用原文档中的解释
 
 ```java
-@Repeatable(Extensions.class) // 可以重新添加注解到一个实现类中（一个实现对应支持多个场景）
+@Repeatable(Extensions.class) // 可以在一个实现类上添加多个扩展定位注解（一个实现对应支持多个场景）
 public @interface Extension {
     // 就是一个自负盈亏的财务主体，比如tmall、淘宝和零售通就是三个不同的业务
     String bizId()  default BizScenario.DEFAULT_BIZ_ID;
