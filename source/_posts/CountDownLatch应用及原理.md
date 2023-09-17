@@ -182,5 +182,5 @@ private static final class Sync extends AbstractQueuedSynchronizer {
 }
 ```
 
-关于AbstractQueuedSynchronizer有不明白的，可以参考之前的**AbstractQueuedSynchronizer简述**
+关于AbstractQueuedSynchronizer有不明白的，可以参考之前的[AbstractQueuedSynchronizer简述](https://www.zhengw-tech.com/2019/02/20/AQS%E6%A6%82%E8%BF%B0/)
 
