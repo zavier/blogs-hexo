@@ -137,13 +137,28 @@ Object data = JsonPath.using(configuration).parse(json).read("$[*]['gender']");
 // 抛出异常
 ```
 
-
+### 值替换
 
 以上主要是读取的操作，同时它还支持对数据进行修改，调用对应的set方法即可
 
 ```java
 String newJson = JsonPath.parse(json).set("$['store']['book'][0]['author']", "Paul").jsonString();
 ```
+
+### 组合jsonPath
+
+组合json与JsonPath使用，在做一些数据转换时，如果使用单个jsonPath无法满足，我们可以同时结合json使用
+
+```json
+{
+    "key1": "jsonpath1",
+    "key2": "jsonpath2"
+}
+```
+
+这样我们可以通过遍历这个json, 将对应jsonPath位置的值替换成具体获取到的值，即可获取到最终的结果数据
+
+
 
 ## 实现简介
 
