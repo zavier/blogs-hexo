@@ -221,7 +221,7 @@ collect.stream()
 
 ### 查找和匹配
 
-> 这里需要额外注意，在集合(流)为空的时候，anyMatch和noneMatch会返回true, 但是anyMatch会返回false
+> 这里需要额外注意，在集合(流)为空的时候，allMatch和noneMatch会返回true, 但是anyMatch会返回false
 
 #### 至少一个匹配
 `boolean b = words.stream().anyMatch("hello"::equals);`
