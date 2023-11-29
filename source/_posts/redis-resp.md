@@ -84,7 +84,7 @@ Redis客户端与服务端通信使用 RESP(REdis Serialization Protocol)协议
 
 ### 整数
 
-以":"字符开头，数值，，最后以"\r\n"结尾
+以":"字符开头，后面为具体数值，最后以"\r\n"结尾
 
 例子：`:1000\r\n`
 
@@ -138,7 +138,7 @@ v1       -字符内容为 "v1"
 
 
 
-这里有一个简单的实现几个功能的demo：https://github.com/zavier/lite-redis
+这里有一个简单的实现几个功能的[demo](https://github.com/zavier/lite-redis)
 
-参考资料：https://github.com/antirez/redis-doc/blob/master/topics/protocol.md
+参考资料：[protocol-spec](https://redis.io/docs/reference/protocol-spec/)
 
