@@ -12,6 +12,13 @@ date: 2023-08-30 00:04:32
 SELECT * FROM task WHERE id > $minId AND status = 1 ORDER BY id LIMIT 200
 ```
 
+如果有其他条件导致需要扫描很大的行数才能扫描到的话，可能还需要限制id上限
+
+```sql
+SELECT * FROM task WHERE id > $minId AND id < $maxId AND status = 1 ORDER BY id LIMIT 200
+```
+
+
 之后每次使用查询的最大值更新变量minId，直到查询不出数据为止，具体对应到Java代码中大致如下：
 
 ```java
