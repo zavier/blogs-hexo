@@ -34,7 +34,7 @@ user=> (greet "students")
 
 ```clojure
 (defn messenger
-  ([]) (messanger "Hello world!")
+  ([] (messenger "Hello world!"))
   ([msg] (println msg)))
 
 ;; 使用
