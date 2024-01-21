@@ -1,5 +1,5 @@
 ---
-title: 10分钟入门 Elasticsearch
+title: 10分钟入门 Elasticsearch 使用
 date: 2024-01-21 20:48:25
 tags: [elasticsearch]
 ---
