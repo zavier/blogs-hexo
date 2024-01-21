@@ -15,7 +15,7 @@ tags: [elasticsearch]
 ```json
 PUT <index>
 {
-	"settings": {
+    "settings": {
         // 主分片数量
         "number_of_shards": "3",
         // 每个主分片拥有的副本分片数量
