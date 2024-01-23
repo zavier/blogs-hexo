@@ -291,6 +291,7 @@ GET <index>/_search
   },
   "size": 2,
   "from": 0,
+  // 表示需要返回精确的总数量
   "track_total_hits": true,
   "sort": [
     {
