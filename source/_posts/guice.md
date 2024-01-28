@@ -1,5 +1,5 @@
 ---
-title: DI框架-Guice
+title: DI框架-Guice入门
 date: 2024-01-27 23:49:59
 tags: [guice, java, di]
 ---

@@ -1,5 +1,5 @@
 ---
-title: maven-profiles
+title: Maven Profiles简介
 date: 2024-01-28 18:21:52
 tags: [maven]
 ---
