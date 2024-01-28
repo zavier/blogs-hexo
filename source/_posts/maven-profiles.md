@@ -4,7 +4,7 @@ date: 2024-01-28 18:21:52
 tags: [maven]
 ---
 
-虽然maven的目标是使项目构建是可移植的，尽量是在任何机器下都可以正常进行构建且结果相同，但是仍然会有一些情况需要我们根据环境等信息来构建不同的内容，这时候就需要用到 [maven profiles](https://maven.apache.org/guides/introduction/introduction-to-profiles.html)
+虽然maven的目标是使项目构建是可移植的，尽量使在任何机器下都可以构建且结果相同，但是仍然会有一些情况需要我们根据环境等信息来构建不同的内容，这时候就需要用到 [maven profiles](https://maven.apache.org/guides/introduction/introduction-to-profiles.html)
 
 <!-- more -->
 
@@ -35,7 +35,7 @@ profiles可以在全局配置的setting.xml中配置，也可以在项目的pom.
         <!-- 激活此profile后，会设置的属性值，可以设置多个 -->
         <properties>
             <!-- 这里会设置成 jdbc.url=jdbc:mysql://dev/db等 -->
-            <jdbc.url>jdbc:mysql://dev/db</project.env>
+            <jdbc.url>jdbc:mysql://dev/db</jdbc.url>
             <jdbc.username>name</jdbc.username>
             <jdbc.password>pwd</jdbc.password>
         </properties>
@@ -51,7 +51,7 @@ profiles可以在全局配置的setting.xml中配置，也可以在项目的pom.
             <activeByDefault>true</activeByDefault>
         </activation>
         <properties>
-            <jdbc.url>jdbc:mysql://local/db</project.env>
+            <jdbc.url>jdbc:mysql://local/db</jdbc.url>
             <jdbc.username>local-name</jdbc.username>
             <jdbc.password>local-pwd</jdbc.password>
         </properties>
@@ -115,3 +115,4 @@ jdbc.password=${jdbc.password}
 变量替换相关可以参考[maven-resources-plugin Filtering](https://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html)
 
 这时候通过maven compile -P \<profile\>， 在 target中会发现结果文件中的 db.properties已经被替换成对应profile中的变量信息
+
