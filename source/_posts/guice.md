@@ -8,6 +8,8 @@ tags: [guice, java, di]
 
 这次我们看一下另一款依赖注入的框架[guice](https://github.com/google/guice)，下面介绍的内容也都是来自[官方文档](https://github.com/google/guice/wiki/)
 
+<!-- more -->
+
 首先需要引入包
 
 ```xml
@@ -17,8 +19,6 @@ tags: [guice, java, di]
     <version>7.0.0</version>
 </dependency>
 ```
-
-快速入门
 
 首先需要定义好相关的接口和实现类，如果有外部依赖的类，可以使用构造器注入，添加上@Inject注解
 
@@ -76,8 +76,6 @@ billingService.chargeOrder(xx, )
 
 如果熟悉spring的同学可能会意识到，Guice自动将代码分成了各个模块，分别独立注入，但是spring默认是全局只有一个容器
 
-<!-- more -->
-
 同时，guice不仅可以注入接口实现类，也可以注入如字符串、数值类型的值，不过这类注入需要使用自定义的注解
 
 先来定义一下自定义的注解
@@ -122,6 +120,4 @@ public class DemoModule extends AbstractModule {
     }
 }
 ```
-
-
 
