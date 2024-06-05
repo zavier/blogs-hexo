@@ -181,3 +181,6 @@ String url = "http://localhost:8081/expense/project/create";
 final ResponseEntity<Resp> exchange1 = restTemplate.exchange(url, HttpMethod.POST, httpPostEntity, Resp.class);
 ```
 
+
+
+RestTemplate 内部实际默认使用的是 JDK 的HttpURLConnection，同时也支持配置使用 Apache 的 HttpClient 以及 OkHttp3，可以按需自行配置使用～
