@@ -183,4 +183,28 @@ final ResponseEntity<Resp> exchange1 = restTemplate.exchange(url, HttpMethod.POS
 
 
 
-RestTemplate 内部实际默认使用的是 JDK 的HttpURLConnection，同时也支持配置使用 Apache 的 HttpClient 以及 OkHttp3，可以按需自行配置使用～
+RestTemplate 内部实际默认使用的是 JDK 的HttpURLConnection，同时也支持配置使用 Apache 的 HttpClient 以及 OkHttp3，可以按需配置使用
+
+如使用OkHttp3, 需要添加依赖(maven)
+
+```xml
+<dependency>
+    <groupId>com.squareup.okhttp3</groupId>
+    <artifactId>okhttp</artifactId>
+    <version>4.12.0</version>
+</dependency>
+```
+
+这时可以进行RestTemplate的配置
+
+```java
+// 进行okhttp相关的配置
+OkHttpClient client = new OkHttpClient.Builder()
+        .addInterceptor(new LoggingInterceptor())
+        .build();
+// 构造RestTemplate
+ClientHttpRequestFactory clientHttpRequestFactory = new OkHttp3ClientHttpRequestFactory(client);
+final RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
+```
+
+使用 HttpClient  也是类似的方式～
