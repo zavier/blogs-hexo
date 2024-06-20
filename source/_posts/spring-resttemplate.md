@@ -200,6 +200,7 @@ RestTemplate 内部实际默认使用的是 JDK 的HttpURLConnection，同时也
 ```java
 // 进行okhttp相关的配置
 OkHttpClient client = new OkHttpClient.Builder()
+        // 这里可以配置拦截器进行日志记录、或者对敏感数据加解密、签名等功能
         .addInterceptor(new LoggingInterceptor())
         .build();
 // 构造RestTemplate
