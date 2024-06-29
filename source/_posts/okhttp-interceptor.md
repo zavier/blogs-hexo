@@ -87,12 +87,31 @@ public class RetryInterceptor implements Interceptor {
 }
 ```
 
+### 添加自定义Header
+
+有些情况如鉴权等需要，可能需要设置一些自定义的header，这个也可以通过拦截器来实现
+
+```java
+public class TokenHeaderInterceptor implements Interceptor {
+    @NotNull
+    @Override
+    public Response intercept(@NotNull Chain chain) throws IOException {
+        Request originalRequest = chain.request();
+        Request requestWithUserAgent = originalRequest.newBuilder()
+                .header("token", "this is token")
+                .build();
+        return chain.proceed(requestWithUserAgent);
+    }
+}
+```
+
 之后在构造客户端时配置上拦截器即可
 
 ```java
 OkHttpClient httpClient = new OkHttpClient.Builder()
   .addInterceptor(new RetryInterceptor(3))
   .addInterceptor(new CatInterceptor())
+  .addInterceptor(new TokenHeaderInterceptor())
   .build();
 ```
 
