@@ -174,7 +174,9 @@ internal fun getResponseWithInterceptorChain(): Response {
   // 初始化网络连接Exchange
   interceptors += ConnectInterceptor
   if (!forWebSocket) {
-    // 网络拦截器，这个需要通过 addNetworkInterceptor 添加
+    // 网络拦截器，需要使用的话可以通过 addNetworkInterceptor 添加
+    // 通过拦截器位置也可以看出来，这里是倒数第二层拦截器的位置了，可以进行更底层的一些操作
+    // 甚至可以覆盖重写默认的header, 如 Content-Type 等内容
     interceptors += client.networkInterceptors
   }
   // 最后一个拦截器，发起真实的网络调用(使用之前构建的Exchange)
