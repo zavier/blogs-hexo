@@ -65,36 +65,10 @@ def max(*numbers):
     sum += number
   return sum
 
-sum(1,2,3,4,5) # = 15
+print(max(1,2,3,4,5)) # = 15
 # 对于 list 或 tuple, 如 nums = [1,2,3,4,5], 可以这样使用
-sum(*nums) # = 15
-```
-
-### 命名关键字参数
-
-命名关键字有些像普通参数和默认参数的结合，在一个 * 后面的参数为命名关键字参数
-
-和普通参数、默认参数的区别就是需要在**传递参数时指定赋值给的参数名字**
-
-**命名关键字参数只能出现在必选参数、默认参数、可变参数后面**
-
-```python
-def person1(name, *, age, sex):
-  print('name:', name, 'age:', age, 'sex:', sex)
- 
-def person1=2(name, *, age=15, sex='F'):
-  print('name:', name, 'age:', age, 'sex:', sex)
-  
-person1('zhang', age=15, sex='F') # 如果命名关键字参数没有设置默认值，则必须显示给每个参数赋值
-person2('zhang') # 函数中已经对参数设置默认值
-```
-
-如果命名关键字参数前面有可变参数，则可省略 * 号
-
-```python
-# age 和 sex 均是命名关键字参数
-def person(name, *args, age, sex):
-  pass
+nums = [1,2,3,4,5]
+print(max(*nums)) # = 15
 ```
 
 ### 关键字参数
@@ -105,27 +79,29 @@ def person(name, *args, age, sex):
 
 ```python
 def person(name, **kw):
-  print('name:', name, 'other:', kw)
+  print('name:', name)
+  for k, v in kw.items():
+    print(k, v)
   
-person('zhang', age=15, sex='M') # name: zhang other: {'sex': 'M', 'age': 15}
+person('zhang', age=15, sex='M') 
+# name: zhang
+# age 15
+# sex M
+
 # 对于 dict, 如 p={'age': 15, 'sex':'M'}, 可以这样使用
+p={'age': 15, 'sex':'M'}
 person('zhang', **p)
+# name: zhang
+# age 15
+# sex M
 ```
 
 ### 总结一下
 
 - 普通参数——必选参数
-- 可选参数——参数有默认值，调用函数时可以传递也可以不传递，如果不传递则使用默认值
+- 默认参数——参数有默认值，调用函数时可以传递也可以不传递，如果不传递则使用默认值
 - 可变参数——传递数量不确定 (可以为0个) 的参数，类似传递一个 list
-- 命名关键字参数 ——如果设置默认值，则同可选参数，否则必须传递，且传递时指定值对应的参数名
 - 关键字参数——传递数量不确定 (可以为0) 的 键值对，类似传递一个 dict
 
 **在函数中出现的顺序必须和上面的保持一致**
-
- 
-
-参考资料
-
- [https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000](https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001431752945034eb82ac80a3e64b9bb4929b16eeed1eb9000)
-
 
