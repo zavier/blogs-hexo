@@ -115,6 +115,47 @@ Joke(setup='Why did the cat sit on the computer?', punchline='It wanted to keep 
 
 
 
+类似的，我们也可以使用`JsonOutputParser`、`XMLOutputParser`来让大模型输出对应格式的结果
+
+```python
+from langchain_core.output_parsers import JsonOutputParser
+from pydantic import BaseModel, Field
+from typing import Optional
+
+class Joke(BaseModel):
+    """Joke to tell user."""
+    setup: str = Field(description="The setup of the joke")
+    punchline: str = Field(description="The punchline of the joke")
+    rating: Optional[int] = Field(
+        default=None,
+        description="How funny the joke is, from 1 to 10"
+    )
+
+# 构造解析器, 这里使用 JsonOutputParser
+parser = JsonOutputParser(pydantic_object=Joke)
+
+# 使用提示此模版
+prompt = PromptTemplate(
+    template="Answer the user query.\n{format_instructions}\n{query}\n",
+    input_variables=["query"],
+    partial_variables={"format_instructions": parser.get_format_instructions()},
+)
+llm = QianfanChatEndpoint(model="ERNIE-3.5-8K")
+
+chain = prompt | llm | parser
+chain.invoke({"query": "Tell me a joke about cats"})
+```
+
+结果：
+
+```json
+{'setup': 'Why did the cat sit on the computer?',
+ 'punchline': 'Because it wanted to keep an eye on the mouse!',
+ 'rating': 7}
+```
+
+
+
 ### 自定义解析
 
 当然，我们也可以仿照之前的例子，自己来编写提示词和配套的解析器
@@ -179,6 +220,98 @@ chain.invoke({"query": query})
 ```
 
 
+
+### 格式修复
+
+由于大模型的不确定性，有时候它返回的合适不一定符合我们的要求，如果只是有一点小小的格式问题，我们可以让大模型来帮助我们修复一下
+
+```python
+from langchain_core.exceptions import OutputParserException
+from langchain.output_parsers import OutputFixingParser
+
+class Joke(BaseModel):
+    """Joke to tell user."""
+    setup: str = Field(description="The setup of the joke")
+    punchline: str = Field(description="The punchline of the joke")
+    rating: Optional[int] = Field(
+        default=None,
+        description="How funny the joke is, from 1 to 10"
+    )
+
+parser = PydanticOutputParser(pydantic_object=Joke)
+
+# 这个是错误的格式
+misformatted = "{'setup': 'Why did the cat sit on the computer?', 'punchline': 'Because it wanted to keep an eye on the mouse!', 'rating': 7}"
+
+# 使用 PydanticOutputParser 解析时会异常
+try:
+    parser.parse(misformatted)
+except OutputParserException as e:
+    print(e)
+
+# 使用解析器和llm构造一个 OutputFixingParser，对异常的格式进行处理，可以解析成功
+new_parser = OutputFixingParser.from_llm(parser=parser, llm=QianfanChatEndpoint(model="ERNIE-3.5-8K"))
+new_parser.parse(misformatted)
+```
+
+输出结果：
+
+```
+# 这里是开始的错误信息输出
+Invalid json output: {'setup': 'Why did the cat sit on the computer?', 'punchline': 'Because it wanted to keep an eye on the mouse!', 'rating': 7}
+For troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/OUTPUT_PARSING_FAILURE 
+
+# 这里是使用 OutputFixingParser 处理后，解析成功的结果
+Joke(setup='Why did the cat sit on the computer?', punchline='Because it wanted to keep an eye on the mouse!', rating=7)
+```
+
+
+
+### 异常重试
+
+上述方式在格式有小问题时修复可以，但是如果数据缺失等有较大问题时可能就无法修复了，这时候只能进行重试，此时可以使用`RetryOutputParser`
+
+```python
+from langchain_core.output_parsers import PydanticOutputParser
+from langchain.output_parsers import RetryOutputParser
+from pydantic import BaseModel, Field
+from typing import Optional
+
+class Joke(BaseModel):
+    """Joke to tell user."""
+    setup: str = Field(description="The setup of the joke")
+    punchline: str = Field(description="The punchline of the joke")
+    rating: Optional[int] = Field(
+        default=None,
+        description="How funny the joke is, from 1 to 10"
+    )
+# 构造解析器
+parser = PydanticOutputParser(pydantic_object=Joke)
+# 使用提示此模版
+prompt = PromptTemplate(
+    template="Answer the user query.\n{format_instructions}\n{query}\n",
+    input_variables=["query"],
+    partial_variables={"format_instructions": parser.get_format_instructions()},
+)
+
+# 这里我们模拟一个有问题的响应，它缺失 punchline、rating属性
+bad_response = "{'setup': 'Why did the cat sit on the computer?'}"
+
+# 这里设置使用的大模型，temperature可以设置的尽量低一点，这样可以最大程度的让它不改变内容，只是补全
+llm = QianfanChatEndpoint(model="ERNIE-3.5-8K", temperature=0.01)
+# 使用解析器、llm构造 RetryOutputParser
+retry_parser = RetryOutputParser.from_llm(parser=parser, llm=llm)
+# 将之前的提示词模版与当时的问题重新生成一个完成的提示词
+prompt_value = prompt.format_prompt(query="Tell me a joke about cats")
+# 使用当时的提示词与错误的相应，传递给retry_parser进行重新生成
+retry_parser.parse_with_prompt(bad_response, prompt_value)
+```
+
+响应如下，可以看到大模型帮我们补全了剩余的内容，并且没有改变原始已有的值
+
+```
+Joke(setup='Why did the cat sit on the computer?', punchline='It wanted to keep an eye on the mouse!', rating=7)
+```
 
 
 
