@@ -315,3 +315,54 @@ Joke(setup='Why did the cat sit on the computer?', punchline='It wanted to keep 
 
 
 
+### 文本分类
+
+使用结构化输出的能力，还可以对内容进行分类打标等操作，下面看一下[官方文档](https://python.langchain.com/docs/tutorials/classification/)中的例子
+
+```python
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.chat_models import QianfanChatEndpoint
+from pydantic import BaseModel, Field
+
+# 通过编写提示词，让大模型提取输出中的特定信息
+tagging_prompt = ChatPromptTemplate.from_template(
+"""
+Extract the desired information from the following passage.
+
+Only extract the properties mentioned in the 'Classification' function.
+
+Passage:
+{input}
+"""
+)
+
+# 定义需要提取的字段和对应的枚举值
+class Classification(BaseModel):
+    """Classification"""
+    sentiment: str = Field(..., enum=["happy", "neutral", "sad"])
+    aggressiveness: int = Field(
+        ...,
+        description="describes how aggressive the statement is, the higher the number the more aggressive",
+        enum=[1,2,3,4,5]
+    )
+    language: str = Field(..., enum=["Spanish", "english", "french", "german", "italian"])
+
+
+# 这里使用百度的Qianfan, temperature设置低一点，同时使用with_structured_output进行结构化输出
+llm=QianfanChatEndpoint(model="ERNIE-3.5-8K", temperature=0.01).with_structured_output(Classification)
+```
+
+进行判断
+
+```python
+inp = "Estoy increiblemente contento de haberte conocido! Creo que seremos muy buenos amigos!"
+prompt = tagging_prompt.invoke({"input": inp})
+llm.invoke(prompt)
+```
+
+结果如下
+
+```
+Classification(sentiment='happy', aggressiveness=1, language='Spanish')
+```
+
