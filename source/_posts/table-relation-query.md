@@ -19,20 +19,20 @@ tags: [工具]
 注意：
 
 1. 需要 jdk 版本大于等于 21
-
+1. 只支持MySQL数据库
 1. 没有做鉴权及SQL注入等处理，所以只建议本地安装个人使用
 
 下面进行一下对应功能介绍
 
 ### 数据源管理
 
-用来管理数据库的连接（需要服务所在的机器可以连接到数据库）
+用来管理数据库（MySQL）的连接（需要服务所在的机器可以连接到数据库）
 
 ![image-20250202150929799](../images/table-relation/data-source-1.png)
 
 ### 表字段关系管理
 
-这里主要进行字段关系的维护，如果使用了外键的话，其实是可以自动同步外键配置的，不过目前项目中使用较少，所以没有进行支持实现，后续可考虑增加此功能
+这里主要进行字段关系的维护，如果使用了外键的话，会自动进行同步，支持跨库关联
 
 ![image-20250202151636888](../images/table-relation/table-relation.png)
 
@@ -48,9 +48,9 @@ tags: [工具]
 
 ### ER图查看
 
-在创建好数据源以及维护好字段关系后，我们可以通过查看ER图来确认一下配置是否正确
+在创建好数据源以及维护好字段关系后，我们可以通过查看ER图来确认一下配置是否正确，并且也可以让新人快速熟悉表间关系
 
-需要输入一下对应的db和table即可，会查找所有关联的表进行展示，并同时展示关联的字段关系
+需要输入一下对应的db和table即可，会查找所有关联的表进行展示，并同时展示关联的字段关系，支持跨库关联
 
 ![image-20250205133459078](../images/table-relation/er-diagram.png)
 
@@ -58,71 +58,20 @@ tags: [工具]
 
 最后就是数据的查询，选择db和表后，需要输入对应的查询条件，这时会查询对应的数据，同时会将关联的表和数据同时在下方进行展示（目前限制了单表数据最多10条）
 
+目前是会根据选择的表向外查询关联表，是广度优先，并且对于相同的表只会查询一次，所以选择的表不同，结果可能会有所差异
+
 ![image-20250202153437403](../images/table-relation/data-query.png)
 
 
 
-### 后续扩展
+### 自然语言生成SQL
 
 在有个表关系的ER图后，我们可以比较容易的让大模型来帮助我们根据自然语言来生成查询SQL了
 
-将memaid格式的ER图文本和自然语言提供给大模型即可，这里举一个小例子(langchain)：
+将memaid格式的ER图文本和自然语言提供给大模型即可，代码已放在[github](https://github.com/zavier/table-relation/commit/3017c387f4ef2b01aa7eadcdd0f55806eff19f06)，具体效果如下
 
-```python
-class ExecutableSql(BaseModel):
-    """可执行的SQL信息"""
-    sql: str = Field(description="查询结果的SQL语句")
+![image-20250215234632834](../images/table-relation/sql-generate-01.png)
 
-def sql_generation(er_diagram: str, description: str, llm: BaseChatModel) -> str:
-    """
-    根据用户的请求，和er图，生成最终的SQL语句
-    """
+生成结果后，可以直接进行执行
 
-    # 构造解析器
-    parser = PydanticOutputParser(pydantic_object=ExecutableSql)
-    # 构造提示词模版
-    prompt = PromptTemplate(
-        template="根据如何mermaid格式的ER图:\n{er_diagram}\n\n为这个请求生成SQL查询语句:\n{description}\n\n，{format_instructions}\n",
-        input_variables=["description", "er_diagram"],
-        partial_variables={"format_instructions": parser.get_format_instructions()},
-    )
-
-    # 将提示此、llm、结果解析器构造成链
-    chain = prompt | llm | parser
-    # 使用参数实际调用获取结果
-    sqlInfo = chain.invoke({"er_diagram": er_diagram, "description": description})
-    return sqlInfo.sql
-```
-
-这里使用了mysql 例子中的employees数据库来实际看下，生成的ER图如下：
-
-![image-20250205141424741](../images/table-relation/employees-er-diagram.png)
-
-将左侧ER图的文本和问题，如：`查询一下员工编号为10002的基本信息、所在部门，以及不同时间对应的薪资情况`提供给大模型，可以得到如下结果：
-
-```sql
-SELECT 
-    e.emp_no,
-    e.birth_date,
-    e.first_name,
-    e.last_name,
-    e.gender,
-    e.hire_date,
-    d.dept_name,
-    s.salary,
-    s.from_date AS salary_from_date,
-    s.to_date AS salary_to_date
-FROM employees e
-JOIN dept_emp de ON e.emp_no = de.emp_no
-JOIN departments d ON de.dept_no = d.dept_no
-JOIN salaries s ON e.emp_no = s.emp_no
-WHERE e.emp_no = 10002
-ORDER BY s.from_date;
-```
-
-我们实际执行一下，获取结果：
-
-![image-20250205141618269](../images/table-relation/employees_data_result.png)
-
-
-
+![image-20250215234822560](../images/table-relation/sql-generate-02.png)
