@@ -24,13 +24,13 @@ tags: [工具]
 
 下面进行一下对应功能介绍
 
-### 数据源管理
+## 数据源管理
 
 用来管理数据库（MySQL）的连接（需要服务所在的机器可以连接到数据库）
 
 ![image-20250202150929799](../images/table-relation/data-source-1.png)
 
-### 表字段关系管理
+## 表字段关系管理
 
 这里主要进行字段关系的维护，如果使用了外键的话，会自动进行同步，支持跨库关联
 
@@ -44,23 +44,49 @@ tags: [工具]
 
 ![新增字段关系](../images/table-relation/add-table-relation.png)
 
-
-
-### ER图查看
+## ER图查看
 
 在创建好数据源以及维护好字段关系后，我们可以通过查看ER图来确认一下配置是否正确，并且也可以让新人快速熟悉表间关系
 
 需要输入一下对应的db和table即可，会查找所有关联的表进行展示，并同时展示关联的字段关系，支持跨库关联
 
-![image-20250205133459078](../images/table-relation/er-diagram.png)
+![image-20250221214249445](../images/table-relation/er-diagram.png)
 
-### 数据查询
+## 数据查询
 
 最后就是数据的查询，选择db和表后，需要输入对应的查询条件，这时会查询对应的数据，同时会将关联的表和数据同时在下方进行展示（目前限制了单表数据最多10条）
 
 目前是会根据选择的表向外查询关联表，是广度优先，并且对于相同的表只会查询一次，所以选择的表不同，结果可能会有所差异
 
-![image-20250202153437403](../images/table-relation/data-query.png)
+同时如果我们的表有逻辑删除相关的字段，也可以在配置文件中添加对应的条件，这样在查询的时候会自动添加这个条件，过滤掉逻辑删除的数据
+
+```properties
+# logic no-delete condition
+logic.no.delete.condition=is_deleted=0
+```
+
+具体查询页面如下
+
+其中会展示查询的表对应的数据，以及全部能查询到的关联的表数据，可以很方便的切换查看数据
+
+![image-20250221214100985](../images/table-relation/data-query.png)
+
+
+
+## AI赋能
+
+### 自动识别表关系
+
+在没有设置外键的情况下，自己维护表字段的关系还是一件比较麻烦的事情，这时候可以让大模型帮我们处理一下
+
+在每次新增数据源时，我们可以获取其中的全部表信息，传递给大模型帮我们进行分析，生成对应关系的数据记录下来
+
+可以在项目的application.properties文件中进行开启/关闭配置，目前还不是很稳定～～
+
+```properties
+# llm analyze table column usage
+analyze.column.usage.auto=true/false
+```
 
 
 
