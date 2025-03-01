@@ -8,18 +8,38 @@ tags: [langchain]
 
 本篇根据langchain官方文档，简单介绍一下如何使用langchain来让大模型返回结构化数据的几种方式
 
-> 使用 langchain0.3，以及百度千帆模型
+> 使用python 3.10.9    langchain0.3，以及百度千帆模型
 
 <!-- more -->
+
+### 环境准备
+
+```shell
+# 创建虚拟环境
+$ python3 -m venv .venv
+# 激活虚拟环境
+$ source .venv/bin/activate
+# 安装依赖
+$ pip install langchain
+$ pip install langchain-community
+$ pip install qianfan
+```
+
+
 
 ### 使用with_structured_output方法
 
 使用pydantic来描述结构化的信息和字段，配置 with_structured_output 方法来让大模型返回结构化的数据
 
 ```python
+import os
 from typing import Optional
 
 from pydantic import BaseModel, Field
+
+# 百度千帆的配置,可以自行去对应平台申请
+os.environ["QIANFAN_AK"] = "your-ak"
+os.environ["QIANFAN_SK"] = "your-sk"
 
 # 通过 pydantic 构造预期返回的类型
 class Joke(BaseModel):

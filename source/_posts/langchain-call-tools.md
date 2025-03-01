@@ -16,6 +16,21 @@ tags: [langchain]
 
 <!-- more -->
 
+> 使用python 3.10.9    langchain0.3，以及百度千帆模型
+
+### 环境准备
+
+```shell
+# 创建虚拟环境
+$ python3 -m venv .venv
+# 激活虚拟环境
+$ source .venv/bin/activate
+# 安装依赖
+$ pip install langchain
+$ pip install langchain-community
+$ pip install qianfan
+```
+
 ### 工具创建
 
 提供给大模型的工具至少要有如下几个部分来说明它自己，以及让大模型判断如何使用，包含：名称、描述、参数(json schema)、以及是否在调用结束后直接返回给用户
@@ -66,6 +81,10 @@ print(add.return_direct)
 ### 将工具绑定到模型
 
 ```python
+# 百度千帆的配置,可以自行去对应平台申请
+os.environ["QIANFAN_AK"] = "your-ak"
+os.environ["QIANFAN_SK"] = "your-sk"
+
 # 定义llm与工具集合
 llm = QianfanChatEndpoint(model="ERNIE-3.5-8K")
 tools = [add, multiple]
