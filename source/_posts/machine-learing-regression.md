@@ -38,14 +38,12 @@ $$
 
 ### 最速下降法
 
-为了找到误差最小值，可以使用斜率的方式，像斜率更低的方向去寻找，找到斜率最低的点，这时候可以使用微分
+为了找到误差最小值，可以使用斜率的方式，向斜率更低的方向去寻找，找到斜率最低的点，这时候可以使用微分
 <div span="class">
 $$
 如：g(x)=(x-1)^2=x^2-2x+1, 对应的微分为：\frac d {dx} g(x) = 2x-2
 $$
 </div>
-当导数小于 0 时，需要向右侧增大的方向去移动寻找更合适的值，当导数大于0 时，则需要向左侧移动去寻找
-
 这种方式可以称为最速下降法或者梯度下降法，对应公式
 <div span="class">
 $$
@@ -60,7 +58,7 @@ $$
 
 
 
-现在要做的就是来计算一下斜率<span class="math">$\frac d {dx} g(x)$</span>，因为其中涉及了 <span class="math">$\theta_0$</span>和<span class="math">$\theta_1$</span>两个值，所以需要使用偏微分来分别计算
+现在要做的就是来计算一下斜率<span class="math">$\frac d {dx} f(x)$</span>，因为其中涉及了 <span class="math">$\theta_0$</span>和<span class="math">$\theta_1$</span>两个值，所以需要使用偏微分来分别计算
 <div span="class">
 $$
 \theta_0 := \theta_0 - \eta \frac {\partial E} {\partial \theta_0} 
