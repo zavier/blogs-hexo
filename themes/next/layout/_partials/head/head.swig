@@ -3,6 +3,20 @@
 <meta name="theme-color" content="{{ theme.android_chrome_color }}">
 <meta name="generator" content="Hexo {{ hexo_version }}">
 
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    }
+  };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- MathJax -->
+<!--
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"></script>
+-->
 {%- if theme.favicon.apple_touch_icon %}
   <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for(theme.favicon.apple_touch_icon) }}">
 {%- endif %}
