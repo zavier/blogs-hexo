@@ -280,6 +280,130 @@ $$
 $$
 </div>
 
+## Python实现
+
+### 最小二乘法
+
+#### 测试数据准备
+
+测试数据 `click.csv`
+
+```csv
+x,y
+235,591
+216,539
+148,413
+35,310
+85,308
+204,519
+49,325
+25,332
+173,498
+191,498
+134,392
+99,334
+117,385
+112,387
+162,425
+272,659
+159,400
+159,427
+59,319
+198,522
+```
+
+现在通过代码实现来拟合成一条直线
+
+#### 数据标准化（可选）
+
+在正式处理之前，我们可以提前对数据进行一下标准化，这样可以让模型的收敛速度更快
+
+标准化（标准差标准化或者叫Z-Score 标准化）的公式如下
+$$
+z^{(i)}=\frac {x^{(i)} - u}  \sigma
+$$
+其中<span class="math">$u$</span>是训练数据的平均值，<span class="math">$\sigma$</span>是标准差，标准差的计算公式如下
+$$
+\sigma = \sqrt \frac {\sum_{(i=1)}^n(x_i - u)^2} {n}
+$$
+
+```python
+# 平均值及标准差的计算 numpy 中已经提供了方法
+import numpy as np
+import matplotlib.pyplot as plt
+
+train = np.loadtxt('click.csv', delimiter=',', skiprows=1)
+# 第一列，左侧数据
+train_x = train[:,0]
+# 第二列，右侧数据
+train_y = train[:,1]
+
+# 现在来对x进行标准化
+# 计算平均值
+mu = train_x.mean()
+# 计算标准差
+sigma = train_x.std()
+# 定义标准化函数
+def standardize(x):
+    return (x - mu) / sigma
+
+train_z = standardize(train_x)
+```
+
+这时候可以根据之前定义的<span class="math">$\theta_0$</span>和<span class="math">$\theta_1$</span>的更新表达式来进行计算，即
+
+<div class="math">
+$$
+\begin{align}
+\theta_0 &:= \theta_0 - \eta \sum_{i=1}^n(f_\theta(x^{(i)}) - y^{(i)}) & \\
+\theta_1 &:= \theta_1 - \eta \sum_{i=1}^n(f_\theta(x^{(i)}) - y^{(i)}) \cdot x^{(i)} & \\
+\end{align}
+$$
+</div>
+
+#### 计算参数
+
+```python
+# 随机初始化函数中的两个参数
+theta0 = np.random.rand()
+theta1 = np.random.rand()
+
+# 生成随机参数后，拟合函数如下
+def f(x):
+    return theta0 + theta1 * x
+
+# 误差函数(我们要找个这个函数最小的情况下的theta0 和theta1 的值)
+def E(x, y):
+    return 0.5 * np.sum(y - f(x) ** 2)
+
+# 定义学习率
+ETA = 1e-3
+# 误差值(两次误差的差值，判断变化幅度)
+diff = 1
+
+# 开始学习(先计算初始的误差)
+error = E(train_z, train_y)
+# 如果两次误差差值过大则继续计算
+while diff > 1e-2:
+    # 开始计算更新
+    theta0 = theta0 - ETA * np.sum((f(train_z) - train_y))
+    theta1 = theta1 - ETA * np.sum((f(train_z) - train_y) * train_z)
+
+    # 计算误差差值
+    current_error = E(train_z, train_y)
+    error, diff = current_error, error - current_error
+
+
+# 学习完成后，绘制拟合结果
+x = np.linspace(-3, 3, 100)
+plt.plot(train_z, train_y, 'o')
+plt.plot(x, f(x))
+plt.show()
+```
+
+![image-20250306220353536](../images/machine_learning/regression_line.png)
+
+
 
 ## 总结
 
