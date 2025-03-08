@@ -401,7 +401,7 @@ plt.plot(x, f(x))
 plt.show()
 ```
 
-![image-20250306220353536](../images/machine_learning/regression_line.png)
+![image-20250306220353536](/images/machine_learning/regression_line.png)
 
 
 

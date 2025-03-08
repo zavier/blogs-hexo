@@ -28,13 +28,13 @@ tags: [工具, trae]
 
 用来管理数据库（MySQL）的连接（需要服务所在的机器可以连接到数据库）
 
-![image-20250202150929799](../images/table-relation/data-source-1.png)
+![image-20250202150929799](/images/table-relation/data-source-1.png)
 
 ## 表字段关系管理
 
 这里主要进行字段关系的维护，如果使用了外键的话，会自动进行同步，支持跨库关联
 
-![image-20250202151636888](../images/table-relation/table-relation.png)
+![image-20250202151636888](/images/table-relation/table-relation.png)
 
 比如员工表(employees)的部门编码字段(dept_no)对应了，部门表(departments)的(dept_no)字段，那么我们可以这样配置（主表可以理解为包含类似外键的表）
 
@@ -42,7 +42,7 @@ tags: [工具, trae]
 
 假设有多张表，它们的操作日志都记录在了一个叫做操作日志的表里面，同时操作日志表有一个类型字段来区分对应的表是哪个，那么我们可以在关联条件中输入对应的条件即可，如（type=1），如果没有这种场景就可以不填写
 
-![新增字段关系](../images/table-relation/add-table-relation.png)
+![新增字段关系](/images/table-relation/add-table-relation.png)
 
 ## ER图查看
 
@@ -50,7 +50,7 @@ tags: [工具, trae]
 
 需要输入一下对应的db和table即可，会查找所有关联的表进行展示，并同时展示关联的字段关系，支持跨库关联
 
-![image-20250221214249445](../images/table-relation/er-diagram.png)
+![image-20250221214249445](/images/table-relation/er-diagram.png)
 
 ## 数据查询
 
@@ -69,7 +69,7 @@ logic.no.delete.condition=is_deleted=0
 
 其中会展示查询的表对应的数据，以及全部能查询到的关联的表数据，可以很方便的切换查看数据
 
-![image-20250221214100985](../images/table-relation/data-query.png)
+![image-20250221214100985](/images/table-relation/data-query.png)
 
 
 
@@ -96,8 +96,8 @@ analyze.column.usage.auto=true/false
 
 将memaid格式的ER图文本和自然语言提供给大模型即可，代码已放在[github](https://github.com/zavier/table-relation/commit/3017c387f4ef2b01aa7eadcdd0f55806eff19f06)，具体效果如下
 
-![image-20250215234632834](../images/table-relation/sql-generate-01.png)
+![image-20250215234632834](/images/table-relation/sql-generate-01.png)
 
 生成结果后，可以直接进行执行
 
-![image-20250215234822560](../images/table-relation/sql-generate-02.png)
+![image-20250215234822560](/images/table-relation/sql-generate-02.png)
