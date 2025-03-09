@@ -405,6 +405,247 @@ plt.show()
 
 
 
+
+
+### 多项式回归实现
+
+对应公式：$$f_\theta(x) = \theta_0 + \theta_1x+\theta_2x^2$$，这里考虑使用多重回归中用到的向量来进行简化计算
+
+<div class="math">
+$$
+\boldsymbol{\theta}=
+\begin{bmatrix}
+\theta_0 \\
+\theta_1 \\
+\theta_2 \\
+\end{bmatrix}
+$$
+</div>
+<div class="math">
+$$
+\boldsymbol{x^{(i)}}=
+\begin{bmatrix}
+1 \\
+x^{(i)} \\
+{x^{(i)}}^2 \\
+\end{bmatrix}
+$$
+</div>
+
+对于训练数据$x$有很多，每一个都是一个矩阵
+
+<span class="math">
+$
+\boldsymbol{x^{(1)}}=
+\begin{bmatrix}
+1 \\
+x^{(1)} \\
+{x^{(1)}}^2 \\
+\end{bmatrix}
+$
+</span>
+，
+<span class="math">
+$
+\boldsymbol{x^{(2)}}=
+\begin{bmatrix}
+1 \\
+x^{(2)} \\
+{x^{(2)}}^2 \\
+\end{bmatrix}
+$
+</span>
+，
+<span class="math">
+$
+\boldsymbol{x^{(3)}}=
+\begin{bmatrix}
+1 \\
+x^{(3)} \\
+{x^{(3)}}^2 \\
+\end{bmatrix}
+$
+</span>
+，...
+<span class="math">
+$
+\boldsymbol{x^{(n)}}=
+\begin{bmatrix}
+1 \\
+x^{(n)} \\
+{x^{(n)}}^2 \\
+\end{bmatrix}
+$
+</span>
+
+
+
+我们要求解的训练数据结果就是这个矩阵，其中即是对于每一个值计算$f_\theta(x)$的结果
+
+
+<span class="math">
+$$
+\begin{bmatrix}
+\theta_0 + \theta_1x^{(1)}+\theta_2{x^{(1)}}^2 \\
+\theta_0 + \theta_1x^{(2)}+\theta_2{x^{(2)}}^2 \\
+...\\ 
+\theta_0 + \theta_1x^{(n)}+\theta_2{x^{(n)}}^2 \\
+\end{bmatrix}
+$$
+</span>
+
+可以转换为：
+<div class="math">
+$$
+\begin{bmatrix}
+1 & x^{(1)} & {x^{(1)}}^2 \\
+1 & x^{(2)} & {x^{(2)}}^2 \\
+1 & x^{(3)} & {x^{(3)}}^2 \\
+\vdots & \vdots & \vdots \\
+1 & x^{(n)} & {x^{(n)}}^2 \\
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+\theta_0 \\
+\theta_1 \\
+\theta_2 \\
+\end{bmatrix}
+$$
+</div>
+
+再次进行转换
+<div class="math">
+$$
+\begin{bmatrix}
+{\boldsymbol{x}^{(1)}}^T \\
+{\boldsymbol{x}^{(2)}}^T \\
+{\boldsymbol{x}^{(3)}}^T \\
+\vdots \\ 
+{\boldsymbol{x}^{(n)}}^T \\
+\end{bmatrix}
+\cdot \\
+\begin{bmatrix}
+\theta_0 \\
+\theta_1 \\
+\theta_2 \\
+\end{bmatrix}
+$$
+</div>
+
+这样可以编写出如下代码
+
+```python
+# 随机生成 theta0, theta1, theta2
+theta = np.random.rand(3)
+
+# 定义将数据转换成上述公式左侧的矩阵
+def to_matrix(x):
+    return np.vstack([np.ones(x.shape[0]), x, x**2]).T
+X = to_matrix(train_z)
+
+# 预测的函数(上述定义的矩阵)
+def f(x):
+    return np.dot(x, theta)
+```
+
+
+
+这时候我们再来看一下参数更新的表达式：$\theta_j := \theta_j - \eta\sum_{i=1}^n(f_\theta(x^{(i)})-y^{(j)})x_j^{(i)}$，考虑一下如何使用向量来简化计算，其中$\sum_{i=1}^n(f_\theta(x^{(i)})-y^{(j)})x_j^{(i)}$可以转换为，这样可以同时针对不同的$x$进行计算
+
+<div class="math">
+$$
+\begin{bmatrix}
+f_\theta(x^{(1)})-y^{(1)} & f_\theta(x^{(2)})-y^{(2)} & ... & f_\theta(x^{(3)})-y^{(3)}
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+    1 & x^{(1)} & {x^{(1)}}^2 \\
+    1 & x^{(2)} & {x^{(2)}}^2 \\
+    1 & x^{(3)} & {x^{(3)}}^2 \\
+    \vdots & \vdots & \vdots \\
+    1 & x^{(n)} & {x^{(n)}}^2 \\
+\end{bmatrix}
+$$
+</div>
+
+代码实现如下
+```python
+# 误差差值
+diff = 1
+# 定义学习率
+ETA = 1e-3
+# 误差函数(我们要找个这个函数最小的情况下的theta0 和theta1 的值)
+def E(x, y):
+    return 0.5 * np.sum(y - f(x) ** 2)
+
+error = E(X, train_y)
+while diff > 1e-2:
+    # 更新参数(theta是一个矩阵)
+    theta = theta - ETA * np.dot(f(X) - train_y, X)
+
+    # 计算误差
+    current_error = E(X, train_y)
+    diff, error = error - current_error, current_error
+```
+
+绘制一下拟合曲线
+
+```python
+# -3和3之间取100个点
+x = np.linspace(-3, 3, 100)
+plt.plot(train_z, train_y, 'o')
+plt.plot(x, f(to_matrix(x)))
+plt.show()
+```
+
+![image-20250309140356599](/images/machine_learning/regression_2.png)
+
+
+
+
+### 随机梯度下降法
+
+随机梯度下降法对应公式为
+$$
+\theta_j := \theta_j - \eta(f_\theta(x^{(k)})-y^{(k)})x_j^{(k)}
+$$
+
+对应代码
+
+```python
+theta = np.random.rand(3)
+
+# 均方误差
+def MSE(x, y):
+    return (1 / x.shape[0]) * np.sum((y - f(x)) ** 2)
+
+# 均方误差的历史记录
+errors = []
+
+# 误差差值
+diff = 1
+
+errors.append(MSE(X, train_y))
+while diff > 1e-2:
+    # 对数据进行随机排列
+    p = np.random.permutation(X.shape[0])
+    for x, y in zip(X[p, :], train_y[p]):
+        theta = theta - ETA * (f(x) - y) * x
+    errors.append(MSE(X, train_y))
+    diff = errors[-2] - errors[-1]
+
+# 绘制拟合曲线
+x = np.linspace(-3, 3, 100)
+plt.plot(train_z, train_y, 'o')
+plt.plot(x, f(to_matrix(x)))
+plt.show()
+```
+
+![image-20250309144958583](/images/machine_learning/regression_3.png)
+
+
+
+
 ## 总结
 
 具体总的流程可以总结为
