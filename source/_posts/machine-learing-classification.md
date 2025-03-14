@@ -82,10 +82,10 @@ plt.show()
 主要对数据进行一下标准化
 
 ```python
-# 计算平均值
-mu = train_x.mean()
-# 计算标准差
-sigma = train_x.std()
+# 计算平均值（两列要分别计算）
+mu = train_x.mean(axis=0)
+# 计算标准差（两列要分别计算）
+sigma = train_x.std(axis=0)
 # 定义标准化函数
 def standardize(x):
     return (x - mu) / sigma
@@ -115,7 +115,7 @@ for epoch in range(max_epochs):
     for i in range(len(X)):
         # 计算预测值 z = x1w1 + x2w2 + b
         z = np.dot(X[i], weights) + bias
-        # z >=1则预测为 1，否则预测为 0
+        # z >=0则预测为 1，否则预测为 0
         y_pred = 1 if z >= 0 else 0
 
         if y_pred != y[i]:
