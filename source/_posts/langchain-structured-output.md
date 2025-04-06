@@ -27,6 +27,29 @@ $ pip install qianfan
 
 
 
+### 普通调用方式
+
+先简单看一下普通的对话调用方式
+
+```python
+model = QianfanChatEndpoint(model="ERNIE-3.5-8K")
+messages = [
+    # 设置消息类型及内容, 其他的还有 AIMessage(历史会话可以通过这种方式传给大模型)
+    SystemMessage(content="你是一名资深python flask专家"),
+    HumanMessage(content="falsk是一个什么样的框架？"),
+]
+result = model.invoke(messages)
+print(result)
+```
+
+输出结果
+
+```
+content='Flask是一个轻量级的Web应用框架，使用Python语言编写。它被设计为可扩展性强、灵活性和可定制性高的框架，适用于开发各种Web应用程序。Flask提供了基本的路由、模板渲染、错误处理等Web开发所需的功能，同时保持了核心的简单性，使得开发者可以快速上手并专注于业务逻辑的开发。\n\nFlask具有以下特点：\n\n1. 轻量级：Flask的核心功能较少，不包含许多大型框架的默认功能，因此更加轻量级，适合小型和大型项目的快速开发。\n2. 灵活性：Flask提供了很高的灵活性，允许开发者根据需求进行定制。开发者可以根据自己的需求选择安装和使用其他扩展包来增强Flask的功能。\n3. 可扩展性：Flask是可扩展的，可以与其他库和扩展包无缝集成。这使得开发者可以根据项目的需求轻松地添加新功能或扩展现有功能。\n4. 易于学习：Flask的API简单明了，易于学习。对于初学者来说，可以快速掌握Flask的基本用法，并开始开发Web应用程序。\n5. 社区支持：Flask拥有庞大的社区支持，有大量的文档、教程和示例可供参考。这有助于开发者解决遇到的问题并获取灵感。\n\n总之，Flask是一个功能强大、灵活且易于使用的Web应用框架，适用于各种规模的Web应用程序开发。' additional_kwargs={} response_metadata={'token_usage': {'input_tokens': 19, 'output_tokens': 286, 'total_tokens': 305}, 'model_name': 'ERNIE-Lite-8K', 'finish_reason': 'stop'} id='run-f355ce24-4899-4c54-8337-d975e06b72d6-0' usage_metadata={'input_tokens': 19, 'output_tokens': 286, 'total_tokens': 305}
+```
+
+
+
 ### 使用with_structured_output方法
 
 使用pydantic来描述结构化的信息和字段，配置 with_structured_output 方法来让大模型返回结构化的数据
