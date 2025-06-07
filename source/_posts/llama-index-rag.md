@@ -62,7 +62,7 @@ RAG 的交互流程如下
 
 ## 概念介绍
 
-下面对于之前涉及到的一些概念进行介绍
+下面根据[官网文档](https://docs.llamaindex.ai/en/stable/)，来对RAG流程中涉及到的一些概念进行介绍
 
 ### 数据加载
 
@@ -345,3 +345,48 @@ response = response_synthesizer.synthesize(
 - no_text/context_only：仅返回检索到的节点或拼接文本，不生成最终答案，适合调试或需要原始上下文的场景；
 - accumulate/compact_accumulate：分别对每个块单独问答并拼接，适合需要分别处理每个块的场景；
 - generation：忽略上下文，直接用 LLM 生成答案，适合开放式生成任务。[官方文档](https://docs.llamaindex.ai/en/stable/module_guides/querying/response_synthesizers/#configuring-the-response-mode)有详细说明。
+
+
+
+
+
+最后，可以将检索器和响应合成器合并成查询引擎，输入用户问题，获取最终加工后的结果，完整代码如下
+
+```python
+from llama_index.core import VectorStoreIndex, get_response_synthesizer
+from llama_index.core.retrievers import VectorIndexRetriever
+from llama_index.core.query_engine import RetrieverQueryEngine
+
+# 构建索引
+index = VectorStoreIndex.from_documents(documents)
+
+# 配置检索器
+retriever = VectorIndexRetriever(
+    index=index,
+    similarity_top_k=2,
+)
+
+# 配置响应合成器
+response_synthesizer = get_response_synthesizer(
+    response_mode="tree_summarize",
+)
+
+# 构造查询引擎
+query_engine = RetrieverQueryEngine(
+    retriever=retriever,
+    response_synthesizer=response_synthesizer,
+)
+
+# 查询获取结果
+response = query_engine.query("What did the author do growing up?")
+print(response)
+```
+
+也可以通过更简化的方式，直接通过索引来构造查询引擎
+
+```python
+query_engine = index.as_query_engine(response_mode="tree_summarize")
+```
+
+
+
