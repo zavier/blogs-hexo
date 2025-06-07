@@ -6,9 +6,11 @@ tags: [LlamaIndex, RAG]
 
 [LLamaIndex](https://docs.llamaindex.ai/en/stable/)顾名思义，看起来是一个适合构建索引的框架，也就是 RAG(Retrieval-Augmented Generation)，所以我们本次主要看一下如何使用LlamaIndex 来实现一下RAG（当然，它也能用来实现智能体等功能）
 
-RAG 的整体流程如下
+RAG 的交互流程如下
 
 <img src="/images/llama_index_rag.png" style="zoom:60%" />
+
+主要涉及如下几个步骤节点
 
 <img src="/images/rag_flow.png" style="zoom:60%" />
 
