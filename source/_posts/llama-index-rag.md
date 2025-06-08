@@ -47,18 +47,24 @@ RAG 的交互流程如下
     Settings.llm = dashscope_llm
     Settings.embed_model = embedder
     
-    # 加载对应路径下的文件内容
-    documents = SimpleDirectoryReader("/user/data").load_data()
+    # 手动构造document
+    documents = [Document(text="""
+    1. 火卫一绕火星运行
+    2. 火星是一种行星
+    3. 卫星绕行星运行
+    4. 火卫一(Phobos)以希腊恐惧与恐慌之神命名
+    5. 卫星位于太空中
+    6. 分类是一种科学过程
+    """)]
     # 构建索引
     index = VectorStoreIndex.from_documents(documents)
     # 创建查询引擎
     query_engine = index.as_query_engine()
     # 提出问题，查询问题对应结棍
-    response = query_engine.query("Some question about the data should go here")
-    print(response)
+    response = query_engine.query("火卫一应该归类为什么类别?")
     ```
 
-
+输出结果：`火卫一应该归类为卫星。`
 
 ## 概念介绍
 
