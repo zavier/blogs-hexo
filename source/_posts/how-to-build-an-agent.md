@@ -1,5 +1,5 @@
 ---
-title: 如何构建一个agent
+title: 如何构建一个Agent
 date: 2025-07-20 16:37:24
 tags: [agent, llm]
 ---
