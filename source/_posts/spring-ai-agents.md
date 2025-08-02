@@ -4,7 +4,7 @@ date: 2025-08-02 21:51:39
 tags: [spring-ai, agents]
 ---
 
-本文主要介绍一下通过Spring AI 来实现一个类似[OpenAI Agents SDK](https://openai.github.io/openai-agents-python/)的功能
+本文主要介绍一下通过Spring AI 来快速实现一个简单的类似[OpenAI Agents SDK](https://openai.github.io/openai-agents-python/)的功能
 
 具体效果为在application.yml 中配置对应的agent 信息，如
 
