@@ -357,3 +357,5 @@ public class AgentAutoConfiguration {
 
 
 这样在项目启动的过程中，会自动读取配置文件，创建相应的Agent Bean, 在需要的地方通过名字直接注入即可使用～
+
+具体的全部代码可参考：https://github.com/zavier/spring-ai-agents
