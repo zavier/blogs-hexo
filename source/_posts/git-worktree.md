@@ -37,8 +37,8 @@ project/
 ├── .git/               # 唯一的 Git 仓库
 ├── main/               # 主分支工作区
 │   └── ...
-../feature-login/      # 功能分支工作区
-../hotfix              # 修复分支工作区
+│── .worktree
+│   └── feature-login   # 功能分支工作区
 ```
 
 这样既避免了重复 clone，又能同时在多个分支上工作。
@@ -60,7 +60,7 @@ git worktree add ../feature-login feature/login
 
 **解释：**
 
-- `../feature-login` 是新工作区目录（注意不要在主工作区创建目录）
+- `../feature-login` 是新工作区目录
 - `feature/login` 是要签出的分支名（不存在会自动创建）
 
 效果：在上级目录创建一个名为 `feature-login` 的文件夹，并签出 `feature/login` 分支。
@@ -138,17 +138,6 @@ git commit -m "Add login feature"
 与此同时，你仍可以在原 `project` 目录中继续开发 `develop` 分支。
 
 
-
-## 四、更多技巧与注意事项
-
-### 同时管理多个分支的优势
-
-- 每个分支都是独立的目录，不会互相污染
-- 构建缓存可复用（例如使用 `node_modules` 或 `venv`）
-- 提高上下文切换效率（无需反复 stash / checkout）
-- 结合 IDE（VSCode、IntelliJ）时，可分别打开不同分支目录并调试
-
-------
 
 ### 注意事项
 
