@@ -18,7 +18,7 @@ Claude Code 官方文档反复强调 context window，但很多人仍然把它�
 
 实际上，它更像是一种会被污染、会老化、需要管理的工程资源。
 
-
+<!-- more -->
 
 ## 重新理解 Context Window
 
