@@ -110,3 +110,17 @@ sitemap:
 baidusitemap:
   path: baidusitemap.xml
 
+# RSS Feed 配置
+feed:
+  enable: true
+  type: atom          # 可选：atom 或 rss2（Atom 更现代，兼容性更好）
+  path: atom.xml      # Feed 文件路径，如 rss2.xml
+  limit: 20           # 显示最近 20 篇文章，0 或 false 为无限制
+  hub:                # 供 PubSubHubbub 使用，通常留空
+  content: true       # 是否在 Feed 中包含全文（false 则只显示摘要）
+  content_limit: 140  # 如 content 为 false，摘要截取字数
+  content_limit_delim: ' '  # 摘要截取的分隔符
+  order_by: -date     # 排序方式，默认按日期倒序
+  icon:               # Feed 图标 URL（可选）
+  autodiscovery: true # 是否在 HTML head 中自动添加订阅发现标签
+  template:           # 自定义模板路径（可选）
