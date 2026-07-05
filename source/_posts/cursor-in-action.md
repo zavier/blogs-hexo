@@ -54,9 +54,9 @@ tags: [cursor, 聚会分账小程序]
 
 
 
-目前小程序还没有上线，有兴趣的话可以扫码申请体验版
+有兴趣的同学可以扫码体验
 
-<img src="/images/expense/share_expense_qrcode.jpg" style="zoom:60%" />
+<img src="/images/expense/share_expense_qrcode.png" style="zoom:60%" />
 
 
 
