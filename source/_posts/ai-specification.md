@@ -1,5 +1,5 @@
 ---
-title: AI 时代，Specification——把决策翻译给 AI
+title: Specification——把决策翻译给 AI
 date: 2026-07-20 08:48:51
 tags: [AI辅助]
 ---
@@ -25,7 +25,7 @@ Specification 就是这个翻译层。它回答的问题是：**如何把工程�
 
 ## 先划清边界：这不是什么
 
-在讨论 Specification 是什么之前，有必要先说明它不是什么。因为「Specification」这个词在软件工程里有很重的历史包袱，容易被理解成已有的概念
+在讨论 Specification 是什么之前，有必要先说明它不是什么。因为「Specification」这个词在软件开发里有很重的历史包袱，容易被理解成已有的概念
 
 **不是需求文档。** 需求文档（PRD，产品需求文档；SRS，软件需求规格说明）描述的是「系统应该做什么」，属于 Knowledge 空间中的需求层。它是 Context 构建时的输入之一，是支撑 Decision 的原材料——而不是 Decision 的结果
 
@@ -166,4 +166,4 @@ AI 起草，人签字。这个分工模式让 Specification 不再是沉重的�
 
 ---
 
-*这是 AI Native 软件工程系列的第五篇。前四篇分别讨论了[软件工程管理的对象是知识](https://zhengw-tech.com/2026/07/19/ai-knowledge-base/)、[知识的六个层次](https://zhengw-tech.com/2026/07/19/ai-what-is-knowledge/)、[从知识到上下文的筛选](https://zhengw-tech.com/2026/07/19/ai-context-extraction/)、[工程决策——在不确定中做最好的选择](https://zhengw-tech.com/2026/07/20/ai-engineering-decision/)。如果你有不同的理解或者实践经验，欢迎一起讨论。*
+*这是 AI Native 软件开发系列的第五篇。前四篇分别讨论了[软件开发管理的对象是知识](https://zhengw-tech.com/2026/07/19/ai-knowledge-base/)、[知识的六个层次](https://zhengw-tech.com/2026/07/19/ai-what-is-knowledge/)、[从知识到上下文的筛选](https://zhengw-tech.com/2026/07/19/ai-context-extraction/)、[工程决策——在不确定中做最好的选择](https://zhengw-tech.com/2026/07/20/ai-engineering-decision/)。如果你有不同的理解或者实践经验，欢迎一起讨论。*

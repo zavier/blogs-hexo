@@ -1,5 +1,5 @@
 ---
-title: AI 时代，Execution 与闭环——从执行到知识的回流
+title: Execution 与闭环——从执行到知识的回流
 date: 2026-07-20 08:54:50
 tags: [AI辅助]
 ---
@@ -94,15 +94,15 @@ Knowledge → Context → Decision → Specification → Execution
 
 这就是**知识的累积效应**的另一面：如果不主动维护，其他几层知识不会自己更新。Execution 之后，需要一个显式的收尾动作——把这次改动中涉及的决策理由、影响面发现、新增的边界条件，写回 ADR 或项目文档。不做这一步，知识负债又多了一笔
 
-这就回到了系列第一篇的命题：软件工程管理的对象不只是代码，是知识。Execution 产出了新的代码——但如果不把这次 Execution 中产生的决策理由、影响面发现、踩过的坑记录下来，下一次任务还是会从同样不完整的 Context 出发，还是会踩同样的坑
+这就回到了系列第一篇的命题：软件开发管理的对象不只是代码，是知识。Execution 产出了新的代码——但如果不把这次 Execution 中产生的决策理由、影响面发现、踩过的坑记录下来，下一次任务还是会从同样不完整的 Context 出发，还是会踩同样的坑
 
 ---
 
 ## 系列回望
 
-从第一篇到这一篇，整个 AI Native 软件工程的链路走完了。
+从第一篇到这一篇，整个 AI Native 软件开发的链路走完了。
 
-**第一篇**提出了一个命题：软件工程管理的对象，可能从来都不是代码，而是知识。
+**第一篇**提出了一个命题：软件开发管理的对象，可能从来都不是代码，而是知识。
 
 **第二篇**追问：那「知识」到底是什么？拆出了六个层次——代码、业务逻辑、架构设计、历史决策、需求、基础知识。
 
@@ -116,7 +116,7 @@ Knowledge → Context → Decision → Specification → Execution
 
 ---
 
-整个系列有一条暗线贯穿始终：**AI 没有改变软件工程的本质——它只是把很多一直隐式存在的问题，从暗处搬到了明处。**
+整个系列有一条暗线贯穿始终：**AI 没有改变软件开发的本质——它只是把很多一直隐式存在的问题，从暗处搬到了明处。**
 
 知识一直都很重要。Context 构建一直都很花时间精力。决策一直在信息不完备的情况下做。Specification 的缺失一直由程序员在敲键盘时自动补全
 
@@ -126,4 +126,4 @@ AI 做的事情不是创造了这些问题，而是让这些问题无法再被�
 
 ---
 
-*这是 AI Native 软件工程系列的第六篇，也是最后一篇。系列全六篇：[软件工程管理的对象是知识](https://zhengw-tech.com/2026/07/19/ai-knowledge-base/) → [知识的六个层次](https://zhengw-tech.com/2026/07/19/ai-what-is-knowledge/) → [从知识到上下文的筛选](https://zhengw-tech.com/2026/07/19/ai-context-extraction/) → [工程决策——在不确定中做最好的选择](https://zhengw-tech.com/2026/07/20/ai-engineering-decision/) → [Specification——把决策翻译给 AI](https://zhengw-tech.com/2026/07/20/ai-specification/) → Execution 与闭环。如果你有不同的理解或者实践经验，欢迎一起讨论。*
+*这是 AI Native 软件开发系列的第六篇，也是最后一篇。系列全六篇：[软件开发管理的对象是知识](https://zhengw-tech.com/2026/07/19/ai-knowledge-base/) → [知识的六个层次](https://zhengw-tech.com/2026/07/19/ai-what-is-knowledge/) → [从知识到上下文的筛选](https://zhengw-tech.com/2026/07/19/ai-context-extraction/) → [工程决策——在不确定中做最好的选择](https://zhengw-tech.com/2026/07/20/ai-engineering-decision/) → [Specification——把决策翻译给 AI](https://zhengw-tech.com/2026/07/20/ai-specification/) → Execution 与闭环。如果你有不同的理解或者实践经验，欢迎一起讨论。*

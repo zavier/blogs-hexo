@@ -1,5 +1,5 @@
 ---
-title: AI 时代，工程决策——在不确定中做最好的选择
+title: 工程决策——在不确定中做最好的选择
 date: 2026-07-20 08:27:51
 tags: [AI辅助]
 ---
@@ -10,7 +10,7 @@ tags: [AI辅助]
 
 这听起来是个缺陷。但这正是「工程判断力」之所以存在的原因。如果每次决策之前信息都是完备的，那就不需要判断力了——按规则执行就行
 
-在整个 AI Native 软件工程的链路中：
+在整个 AI Native 软件开发的链路中：
 
 ```
 Knowledge → Context → Decision → Specification → Execution
@@ -204,4 +204,4 @@ AI 在 Decision 中最好的角色，不是决策者，而是决策放大器—�
 
 ---
 
-*这是 AI Native 软件工程系列的第四篇。前三篇分别讨论了[软件工程管理的对象是知识](https://zhengw-tech.com/2026/07/19/ai-knowledge-base/)、[知识的六个层次](https://zhengw-tech.com/2026/07/19/ai-what-is-knowledge/)、[从知识到上下文的筛选](https://zhengw-tech.com/2026/07/19/ai-context-extraction/)。如果你有不同的理解或者实践经验，欢迎一起讨论。*
+*这是 AI Native 软件开发系列的第四篇。前三篇分别讨论了[软件开发管理的对象是知识](https://zhengw-tech.com/2026/07/19/ai-knowledge-base/)、[知识的六个层次](https://zhengw-tech.com/2026/07/19/ai-what-is-knowledge/)、[从知识到上下文的筛选](https://zhengw-tech.com/2026/07/19/ai-context-extraction/)。如果你有不同的理解或者实践经验，欢迎一起讨论。*
