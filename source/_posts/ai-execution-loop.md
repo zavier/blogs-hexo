@@ -126,4 +126,4 @@ AI 做的事情不是创造了这些问题，而是让这些问题无法再被�
 
 ---
 
-*这是 AI Native 软件开发系列的第六篇，也是最后一篇。系列全六篇：[软件开发管理的对象是知识](https://zhengw-tech.com/2026/07/19/ai-knowledge-base/) → [知识的六个层次](https://zhengw-tech.com/2026/07/19/ai-what-is-knowledge/) → [从知识到上下文的筛选](https://zhengw-tech.com/2026/07/19/ai-context-extraction/) → [工程决策——在不确定中做最好的选择](https://zhengw-tech.com/2026/07/20/ai-engineering-decision/) → [Specification——把决策翻译给 AI](https://zhengw-tech.com/2026/07/20/ai-specification/) → Execution 与闭环。如果你有不同的理解或者实践经验，欢迎一起讨论。*
+*这是 AI Native 软件开发系列的第六篇。前五篇：[软件开发管理的对象是知识](https://zhengw-tech.com/2026/07/19/ai-knowledge-base/) → [知识的六个层次](https://zhengw-tech.com/2026/07/19/ai-what-is-knowledge/) → [从知识到上下文的筛选](https://zhengw-tech.com/2026/07/19/ai-context-extraction/) → [工程决策——在不确定中做最好的选择](https://zhengw-tech.com/2026/07/20/ai-engineering-decision/) → [Specification——把决策翻译给 AI](https://zhengw-tech.com/2026/07/20/ai-specification/)。下一篇继续：[知识沉淀的第一步——统一语言与 ADR](https://zhengw-tech.com/2026/07/21/ai-knowledge-precipitation/)。如果你有不同的理解或者实践经验，欢迎一起讨论。*
