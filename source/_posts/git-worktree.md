@@ -1,6 +1,6 @@
 ---
 title: Git Worktree 实战：从多分支并行，到 AI Agent 隔离
-date: 2026-07-23 10:00:00
+date: 2025-10-08 10:08:26
 tags: [git, AI辅助]
 ---
 
