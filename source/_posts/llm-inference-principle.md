@@ -2,7 +2,6 @@
 title: LLM 推理原理：从 Token 到输出，一个后端开发的完整拆解
 date: 2026-07-25 17:16:37
 tags: [AI辅助, 大语言模型, 推理]
-description: 用数据库查询、流水线、缓存、虚拟内存等后端概念，从零理解 LLM 推理全过程——Tokenizer、Embedding、Transformer、QKV、KV Cache、采样策略。不需要机器学习背景。
 ---
 
 作为应用层开发者，这些概念我们每天都在用——Agent、RAG、Context Engineering、模型调用。但模型内部到底在做什么，一直处于一个「大概知道、细节模糊」的状态。
