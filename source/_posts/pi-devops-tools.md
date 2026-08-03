@@ -137,7 +137,7 @@ export default function (pi: ExtensionAPI) {
 2. **弹窗确认不可跳过。** 每次调用都弹出 overlay 确认框：操作类型按颜色区分（INSERT 绿、UPDATE 黄、DELETE 红），标明目标 `数据库 @ 连接`，完整 SQL 逐行展示。Enter 确认，Esc 取消，其他按键全部忽略。UPDATE/DELETE 没带 WHERE 时会醒目警告「将影响表中所有行」——警告不阻止执行，这个判断留给人。
 3. **用户的决定不被缓存。** 没有「本次会话不再询问」之类的开关，每条 SQL 独立确认。prompt 里还要求 AI 调用前先解释这次要改什么、为什么——用户看到弹窗时已经有预期，不会对着一条突兀的 SQL 做决定。
 
-> 📷 <img src="/images/pi-extension/db-update.png" style="zoom:60%" />
+> <img src="/images/pi-extension/db-update.png" style="zoom:60%" />
 
 两个实现细节值得一提。一是**用户拒绝是正常返回，不是异常**：取消后工具回给 AI 的是一条普通消息「用户已拒绝变更」，AI 可以接着对话调整方案，而不是收到一个 error 之后不知所措。二是**确认逻辑以回调形式注入**——核心层不依赖 Pi 的 UI，测试时替换成 stub 即可，这让「每次必须过人」这条规则本身能被单元测试覆盖。
 
