@@ -1,5 +1,5 @@
 ---
-title: 用 Herdr 让 AI Agent 互相派活：一次多仓库需求开发的全流程实践
+title: 用 Herdr 让 AI Agent 互相派活：打破多 Agent 协作的上下文孤岛
 date: 2026-08-09 08:54:31
 tags: [AI辅助, 工程实践, 工具]
 ---
