@@ -68,6 +68,12 @@ share:
 post_copyright:
   enable: false
 
+# 404 页面（nginx 里配了 error_page 404 /404.html，需要这个文件才能生效）
+error_404:
+  enable: true
+  subtitle: 页面不存在
+  background: /images/404.svg
+
 # Mermaid：
 # hexo-filter-mermaid-diagrams 把 ```mermaid 代码块输出成 <pre class="mermaid">，
 # 而 Butterfly 自带的渲染只认 .mermaid-wrap，两边标记对不上会导致图完全不显示，
