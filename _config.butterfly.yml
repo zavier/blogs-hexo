@@ -57,6 +57,14 @@ footer:
     <a href="https://beian.miit.gov.cn/" target="_blank"
     rel="noopener">黑ICP备19000073号-1</a>
 
+# 文章页不要分享按钮（facebook/x/微信 等，留空即关闭）
+share:
+  use: false
+
+# 不要"版权声明"区块
+post_copyright:
+  enable: false
+
 # Mermaid：
 # hexo-filter-mermaid-diagrams 把 ```mermaid 代码块输出成 <pre class="mermaid">，
 # 而 Butterfly 自带的渲染只认 .mermaid-wrap，两边标记对不上会导致图完全不显示，
