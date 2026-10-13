@@ -28,6 +28,16 @@ social:
     https://www.zhihu.com/people/zheng-wei-4-95/answers
     || 知乎 || '#0084ff'
 
+# 侧边栏卡片
+aside:
+  card_author:
+    # 主题默认指向占位地址 https://github.com/xxxxxx，换成自己的主页
+    button:
+      link: https://github.com/zavier
+  # 公告卡片内容还是主题默认的占位文案，先关掉
+  card_announcement:
+    enable: false
+
 toc:
   post: true
   number: true
