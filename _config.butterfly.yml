@@ -52,6 +52,9 @@ footer:
   owner:
     enable: true
     since: 2019
+  # 去掉右下角的「框架 Hexo x.x.x | 主题 Butterfly x.x.x」
+  copyright:
+    enable: false
   # 备案号：Butterfly 没有 Next 那样的 beian 配置项，走页脚自定义 HTML
   custom_text: >-
     <a href="https://beian.miit.gov.cn/" target="_blank"
