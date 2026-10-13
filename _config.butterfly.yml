@@ -1,0 +1,61 @@
+# Butterfly 增量配置
+# 只写要覆盖主题默认值的项，其余全部用主题自带默认值。
+# 主题自带默认值见 node_modules/hexo-theme-butterfly/_config.yml；
+# 这样主题升级时不会和本地改动打架（原 Next 主题是直接改主题目录，升级很痛苦）。
+
+# 首页不显示顶部大图与站点标题，第一屏直接进文章列表。
+# 导航栏仍在，SEO 用的隐藏 h1 也保留。
+index_img: false
+# 归档 / 标签 / 分类页也有同样的大图，需要一起去掉就取消注释：
+# archive_img: false
+# tag_img: false
+# category_img: false
+
+favicon: /images/favicon.ico
+
+avatar:
+  img: /images/weixin.jpg
+  effect: false
+
+menu:
+  首页: / || fas fa-home
+  标签: /tags/ || fas fa-tags
+  归档: /archives/ || fas fa-archive
+
+social:
+  fab fa-github: https://github.com/zavier || Github || '#24292e'
+  fab fa-zhihu: >-
+    https://www.zhihu.com/people/zheng-wei-4-95/answers
+    || 知乎 || '#0084ff'
+
+toc:
+  post: true
+  number: true
+  expand: false
+
+busuanzi:
+  site_uv: true
+  site_pv: true
+  page_pv: true
+
+footer:
+  owner:
+    enable: true
+    since: 2019
+  # 备案号：Butterfly 没有 Next 那样的 beian 配置项，走页脚自定义 HTML
+  custom_text: >-
+    <a href="https://beian.miit.gov.cn/" target="_blank"
+    rel="noopener">黑ICP备19000073号-1</a>
+
+# Mermaid：
+# hexo-filter-mermaid-diagrams 把 ```mermaid 代码块输出成 <pre class="mermaid">，
+# 而 Butterfly 自带的渲染只认 .mermaid-wrap，两边标记对不上会导致图完全不显示，
+# 所以关掉主题渲染、由页脚脚本加载 mermaid.js 直接渲染 .mermaid 元素。
+mermaid:
+  enable: false
+inject:
+  bottom:
+    - >-
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js">
+      </script>
+    - '<script>mermaid.initialize({ startOnLoad: true });</script>'
