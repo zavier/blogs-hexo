@@ -75,6 +75,12 @@ post_copyright:
 mermaid:
   enable: false
 inject:
+  head:
+    - >-
+      <style>
+      /* 作者卡/手机上侧边栏的「分类」入口，博客没有分类，先隐藏 */
+      .site-data > a[href$="/categories/"] {display:none}
+      </style>
   bottom:
     - >-
       <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js">
