@@ -80,6 +80,11 @@ inject:
       <style>
       /* 作者卡/手机上侧边栏的「分类」入口，博客没有分类，先隐藏 */
       .site-data > a[href$="/categories/"] {display:none}
+      /* 暗色模式下给 mermaid 图套白底：图是亮色主题绘制的，深色连线在近黑
+         背景上看不见（我们绕过主题自带渲染，图不跟随日夜切换重绘） */
+      html[data-theme="dark"] pre.mermaid {
+      background:#fff;border-radius:8px;padding:12px;margin:0 0 1em
+      }
       </style>
   bottom:
     - >-
