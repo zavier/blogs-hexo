@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 520" width="820" height="520" role="img" aria-label="人、AI、agent-browser 与浏览器的关系">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8b95a3"/>
+    </marker>
+    <marker id="arrow-d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4a7fb5"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="820" height="520" fill="#ffffff"/>
+
+  <!-- 人 -->
+  <rect x="60" y="24" width="360" height="56" rx="10" fill="#eef3f8" stroke="#c3d2e0"/>
+  <text x="80" y="48" font-size="16" font-weight="600" fill="#1f2933">你</text>
+  <text x="80" y="68" font-size="13" fill="#5b6470">说清目标，最后验收结果</text>
+
+  <!-- 目标箭头 -->
+  <line x1="240" y1="80" x2="240" y2="114" stroke="#8b95a3" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="252" y="102" font-size="13" fill="#5b6470">一句话的目标</text>
+
+  <!-- AI -->
+  <rect x="60" y="118" width="360" height="72" rx="10" fill="#f6f8fa" stroke="#d8dde3"/>
+  <text x="80" y="146" font-size="17" font-weight="600" fill="#1f2933">AI（大模型）</text>
+  <text x="80" y="170" font-size="13" fill="#5b6470">看清单、挑编号、动手、自己查错</text>
+
+  <!-- 命令箭头 -->
+  <line x1="240" y1="190" x2="240" y2="228" stroke="#8b95a3" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="252" y="214" font-size="13" fill="#5b6470">click @e48</text>
+
+  <!-- CLI -->
+  <rect x="60" y="232" width="360" height="96" rx="10" fill="#f6f8fa" stroke="#d8dde3"/>
+  <text x="80" y="260" font-size="17" font-weight="600" fill="#1f2933">agent-browser（命令行工具）</text>
+  <text x="80" y="286" font-size="13" fill="#5b6470">· 把 @e48 翻成真实坐标和鼠标事件</text>
+  <text x="80" y="308" font-size="13" fill="#5b6470">· 打开页面、读清单、存截图、记请求</text>
+
+  <!-- CDP 箭头 -->
+  <line x1="240" y1="328" x2="240" y2="366" stroke="#8b95a3" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="252" y="352" font-size="13" fill="#5b6470">CDP（WebSocket）</text>
+
+  <!-- Chrome -->
+  <rect x="60" y="370" width="360" height="88" rx="10" fill="#f6f8fa" stroke="#d8dde3"/>
+  <text x="80" y="398" font-size="17" font-weight="600" fill="#1f2933">Chrome（真实浏览器）</text>
+  <text x="80" y="422" font-size="13" fill="#5b6470">登录态、页面、网络请求都在这一层</text>
+  <text x="80" y="442" font-size="13" fill="#5b6470">源码 1.29 MB，清单只有 18.7 KB</text>
+
+  <!-- 回传通道 -->
+  <polyline points="420,414 470,414 470,154 424,154" fill="none" stroke="#4a7fb5" stroke-width="1.5"
+            stroke-dasharray="5 4" marker-end="url(#arrow-d)"/>
+  <text x="490" y="170" font-size="14" font-weight="600" fill="#2f4f6f">回传给 AI 的东西</text>
+  <text x="490" y="196" font-size="13" fill="#5b6470">· 页面清单（1.5 KB）</text>
+  <text x="490" y="218" font-size="13" fill="#5b6470">· 截图（默认只存硬盘）</text>
+  <text x="490" y="240" font-size="13" fill="#5b6470">· 接口的请求与返回</text>
+
+  <text x="490" y="290" font-size="12" fill="#8b95a3">AI 不需要“看见”浏览器，</text>
+  <text x="490" y="310" font-size="12" fill="#8b95a3">它只需要一份能点名的清单。</text>
+</svg>
