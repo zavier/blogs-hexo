@@ -96,4 +96,24 @@ inject:
     - >-
       <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js">
       </script>
-    - '<script>mermaid.initialize({ startOnLoad: true });</script>'
+    # 不用 startOnLoad：mermaid.min.js 从 CDN 回来得比 DOMContentLoaded 晚时，
+    # 自动渲染的监听器还没注册就已经错过了，图会一直是空白框（刷新才出来）。
+    # 改成自己判断时机 + load 兜底；:not([data-processed]) 保证不会重复渲染。
+    - >-
+      <script>
+      (function () {
+        if (!window.mermaid) return;
+        mermaid.initialize({ startOnLoad: false });
+        function render() {
+          if (!window.mermaid) return;
+          var nodes = document.querySelectorAll('pre.mermaid:not([data-processed])');
+          if (nodes.length) { try { mermaid.run({ nodes: nodes }); } catch (e) { console.error(e); } }
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', render);
+        } else {
+          render();
+        }
+        window.addEventListener('load', render);
+      })();
+      </script>
