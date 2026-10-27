@@ -4,7 +4,7 @@ date: 2026-10-27 01:10:00
 tags: [AI辅助, 工程实践, 工具]
 ---
 
-上一篇讲的是让 AI 替你点网页：点登录、点下单、点保存，最后把截图和接口记录交回来。文末那个例子里，它记了一笔 50.5 元的交通费，账本页上那一行清清楚楚。
+[上一篇](/2026/10/25/agent-browser-guide/)讲的是让 AI 替你点网页：点登录、点下单、点保存，最后把截图和接口记录交回来。文末那个例子里，它记了一笔 50.5 元的交通费，账本页上那一行清清楚楚。
 
 可截图只证明页面画出了这一行。它证明不了库里存的是 `5050` 还是 `50.5`，证明不了这笔钱落在哪张表、状态对不对、有没有重复记两次。要确认这些，只能去查数据库。
 
@@ -105,7 +105,7 @@ flowchart LR
 
 关于账号只提一句：**别把你平时那个主账号直接给它。** 单独开一个只读账号（一行 `GRANT SELECT` 的事），名字叫 `ro_xxx` 就行。理由下一节会讲——不是怕它造反，是怕配置漏了一行。
 
-## 四、常用配置项：哪些必配，哪些按需
+## 四、配置与工具：哪些必配，哪些按需
 
 一份能用的 toml 大概长这样，注释标了哪几个是必配的：
 
@@ -142,7 +142,25 @@ source = "shop"
 tools: ['execute_sql']
 ```
 
-`search_objects` 没了——而它恰恰是让 agent“先看清表结构再写 SQL”的关键，没有它模型只能猜字段名，猜错了再执行，白烧几轮。所以要么不写（那也别指望护栏），要么把两个都写全。
+`search_objects` 没了——而它恰恰是让 agent“先看清表结构再写 SQL”的关键，没有它模型只能猜字段名，猜错了再执行，白烧几轮。
+
+但同一条规则，换个角度看就是好事：你要是需要它，丢了叫配错；你不需要它，那叫特性。想让哪个工具在，就把哪个写进去——只写一个，另一个就真的消失。
+
+比如某个库只想让 agent 看结构、不许它查数据：
+
+```toml
+[[tools]]
+name   = "search_objects"
+source = "shop"
+```
+
+这时候 `execute_sql` 这个工具压根不存在，模型去调会被直接拒绝：
+
+```text
+Tool execute_sql not found
+```
+
+这比下面要讲的 `readonly` 更硬一层：`readonly` 是“能执行 SQL，但只准读”，选择性暴露是“根本没有执行 SQL 的能力”。生产库、或者只想让它摸 schema 的场合，用这个。
 
 ### `readonly`：不写这一行，只读是假的
 
@@ -164,7 +182,7 @@ tools: ['execute_sql']
 
 所以：**如果你要的是只读，这一行就没有“按需”的余地。** 不写它，你拿到的是一个能删表的数据库客户端，只是没人去删。
 
-`readonly` 不是拦一切，是白名单：只放行 `select / with / explain / show / describe / desc`。所以 `WITH ... SELECT` 不会误伤。配上之后工具描述里还会自动带 `[READ-ONLY MODE]`，模型第一眼就知道不能写，少撞一次墙。
+`readonly` 不是拦一切，是白名单：只放行 `select / with / explain / show / describe / desc`。所以 `WITH ... SELECT` 不会误伤。配上之后工具描述里还会自动带 `[READ-ONLY MODE]`，模型第一眼就知道不能写，少撞一次墙。顺带一提，`BEGIN`/`COMMIT` 也不在白名单里——只读模式下跑不了事务，不会出现“一半成功”的中间状态。
 
 ### `max_rows`：让它知道“这只是前 200 行”
 
@@ -175,6 +193,47 @@ agent 不知道你的表多大，`SELECT *` 一下拉回几十万行，冲爆的
 ```
 
 模型看得见 `truncated`，就知道“我只要到了前 200 行”，而不是默认这就是全部——否则它会拿一部分数据给你下一个错误的结论。这个标记比上限本身更值钱。
+
+### 再进一步：把常用查询固化成工具
+
+到这里，agent 拿到的还是“一条能随便写的 `execute_sql`”。如果有些查询是固定的、团队天天要跑，可以在同一份 toml 里把它定义成自己的工具（暂时没这需求的话，这节可以跳过）：
+
+```toml
+[[tools]]
+name        = "orders_by_status"
+description = "按状态统计订单数"
+source      = "shop"
+statement   = "SELECT status, COUNT(*) AS n FROM orders WHERE status = ? GROUP BY status"
+
+[[tools.parameters]]
+name           = "status"
+type           = "string"
+description    = "订单状态"
+allowed_values = ["paid", "pending", "refunded"]
+```
+
+注册出来就是个普通 MCP 工具。模型看到的不是空白 SQL 输入框，而是“一个状态参数，可选三个值”；传别的值会在执行前被拦掉：
+
+```text
+Input validation error: status: Invalid option: expected one of "paid"|"pending"|"refunded"
+```
+
+这正好落在第二节那根判断轴上。固定下来有三个好处：**参数有类型和枚举约束**、**SQL 不给模型看**（它改不了 `WHERE`）、**团队共用一份定义**。代价是灵活性——新问题得加新工具，探索性查询还是靠 `execute_sql`。所以两个都留着，看场景切。它和 `readonly` 也不冲突——自定义工具本身就是写死的 SQL，护栏照样开着。
+
+（占位符各库不同：MySQL 是 `?`，PostgreSQL 是 `$1`，SQL Server 是 `@p1`，Oracle 是 `:1`。换库只改这一处。）
+
+### 调配置的时候，怎么快速看对不对
+
+不用每次都开客户端。让 DBHub 走 HTTP 在本机起一个，自带网页调试台：
+
+```bash
+npx @bytebase/dbhub@latest --transport http --host 127.0.0.1 --port 8080 \
+  --config ~/.config/dbhub/acme-shop.toml
+```
+
+浏览器打开 `http://localhost:8080` 就是 Workbench：能直接跑工具、看最近几次请求的 trace。手边没有库也能先看看长什么样，单独跑一条 `--demo` 就行。
+
+`--host` 一定要带。它默认是 `0.0.0.0`，也就是绑到所有网卡，而 Workbench 没有鉴权——同一个网段里谁都能连云查数据。本机自己用，没有理由不带 `127.0.0.1`。
 
 ## 五、多项目：三种方案
 
@@ -252,6 +311,17 @@ claude mcp add --scope project db-shop -- \
   npx -y @bytebase/dbhub@latest --transport stdio \
   --config /Users/you/.config/dbhub/acme-shop.toml
 ```
+
+只用 Claude Code、又只有一个库的话，还有更省事的一条路——装官方插件：
+
+```text
+/plugin marketplace add bytebase/dbhub
+/plugin install dbhub@dbhub
+```
+
+它自带 `readonly = true` 和 `max_rows = 1000`，连接串存进安全存储（不进配置文件），另附 `/dbhub:setup`（帮拼连接串）和 `/dbhub:explore`（教模型按渐进披露读 schema）两个技能。
+
+代价是只覆盖“单库 + 只读”：多库、要写、要隧道、要自定义工具，还是回上面的 toml 路径。切过去之前记得在 `/plugin` 里关掉插件自带的 server，否则会同时跑两个实例。
 
 Codex 那份 TOML：
 
