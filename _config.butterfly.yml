@@ -44,9 +44,12 @@ toc:
   expand: false
 
 busuanzi:
-  site_uv: true
-  site_pv: true
-  page_pv: true
+  # 不蒜子官方后端自 2024 起频繁 502，2026-11 实测接口全挂（官网首页也 502）
+  # 先关闭显示，避免页面留一个永远转的 spinner；后续如换 Vercount，
+  # 只需在此段上方加 CDN.option.busuanzi 再把三项改回 true
+  site_uv: false
+  site_pv: false
+  page_pv: false
 
 footer:
   owner:
