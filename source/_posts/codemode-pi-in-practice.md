@@ -166,7 +166,7 @@ store("top", sorted[0]);          // 结论存进会话，下一段脚本用 loa
 
 **所以关键不是「有没有把工具暴露出来」，而是模型会更自然地走它熟悉的那条路。** 这条路能到终点，但过程不可见、改动不落地、账目也归不到 pi 头上——A、C 两组跑完，会话记录里只有 bash。
 
-> 这个 demo 可以独立跑，代码在 **https://github.com/zavier/codemode-billing-demo**（public，MIT）。
+> 这个 demo 可以独立跑，代码在 **[zavier/codemode-billing-demo](https://github.com/zavier/codemode-billing-demo)**（public，MIT）。
 
 
 ## 四、在 pi 里 codemode 长什么样

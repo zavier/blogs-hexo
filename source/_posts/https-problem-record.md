@@ -30,7 +30,7 @@ unable to find valid certification path to requested target
 
 
 
-**怀疑2: ** 接口换了证书，服务器没有对应的根证书？
+**怀疑2：** 接口换了证书，服务器没有对应的根证书？
 
 操作： 通过浏览器访问，查询到接口提供方对应的根证书颁发机构为：`DST Root CA X3`
 
